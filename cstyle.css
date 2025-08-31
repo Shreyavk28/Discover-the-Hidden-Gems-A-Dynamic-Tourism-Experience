@@ -1,0 +1,136 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.image-container {
+    width: 100%;
+    height: 640px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+}
+
+.main-image-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+ #destination-title {
+    position: absolute;
+    top: 20px; 
+    left: 50%;
+    transform: translateX(-50%); 
+    font-family: 'Trirong', serif;
+    font-size: 4rem;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+ 
+
+
+
+.navigation-links {
+    display: flex;
+    justify-content: space-evenly; 
+    align-items: center;
+    background-color: #d28989; 
+    padding: 0; 
+    width: 100%;
+}
+
+.navigation-links div {
+    flex: 1; 
+    text-align: center; 
+    padding: 15px 0; 
+    background-color: rgb(225, 224, 224); 
+    border-right: 0.1px solid black; 
+}
+
+.navigation-links div:last-child {
+    border-right: none; 
+}
+
+.navigation-links div a {
+    color: rgb(119, 119, 119); 
+    text-decoration: none;
+    font-size: 1.2rem;
+    display: block;
+}
+
+
+.navigation-links div.active {
+    background-color: white;
+}
+
+.navigation-links div.active a {
+    color: red; 
+}
+
+
+.navigation-links div a:hover {
+    color: red;
+}
+
+
+.destination-section {
+    display: none; 
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    font-size: large;
+    border-radius: 10px;
+    line-height: 35px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.destination-section.active {
+    display:flex; 
+   
+}
+
+.section-image {
+    flex-shrink: 0;
+    width: 350px;
+    height: 350px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+
+
+
+
+.go-back-btn {
+    /* position: fixed;  */
+    bottom: 10px; 
+    left: 10px; 
+    padding: 10px 20px;
+    background-color: #bea6f6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    z-index: 1000; 
+}
+
+.go-back-btn:hover {
+    background-color: #f5debd;
+}
+
+
+
+
+
+
+

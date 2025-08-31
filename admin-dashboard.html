@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Reviews</title>
+    <style>
+        /* Resetting some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Add responsiveness */
+        @media screen and (max-width: 768px) {
+            th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 18px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<section id="admin-dashboard">
+    <h1>Admin Dashboard - Review Submissions</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Experience</th>
+                <th>Rating</th>
+                <th>Submitted At</th>
+            </tr>
+        </thead>
+        <tbody id="reviewsTable">
+            <!-- Reviews will be dynamically loaded here -->
+        </tbody>
+    </table>
+</section>
+
+<script>
+    // Function to fetch reviews from the server
+    async function fetchReviews() {
+        try {
+            const response = await fetch('http://localhost:5000/admin/reviews');
+            const reviews = await response.json();
+
+            const reviewsTable = document.getElementById('reviewsTable');
+            reviewsTable.innerHTML = reviews.map(review => `
+                <tr>
+                    <td>${review.name}</td>
+                    <td>${review.experience}</td>
+                    <td>${review.rating}</td>
+                    <td>${new Date(review.submittedAt).toLocaleString()}</td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+        }
+    }
+
+    // Fetch reviews when the page is loaded
+    fetchReviews();
+</script>
+
+</body>
+</html>
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destination Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Trirong&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cstyle.css">
+</head>
+<body>
+    <!-- Main Header Section -->
+    <div class="image-container">
+        <h1 id="destination-title">Destination</h1>
+        <img id="destination-image" class="main-image-img" src="" alt="Main Destination Image">
+    </div>
+
+    <div class="navigation-links">
+        <div><a href="#" onclick="showSection('overview', event)">Overview</a></div>
+        <div><a href="#" onclick="showSection('things-to-do', event)">Things to Do</a></div>
+        <div><a href="#" onclick="showSection('food', event)">Popular Food</a></div>
+        <div><a href="#" onclick="showSection('nearby-places', event)">Nearby Places</a></div>
+    </div>
+
+    <!-- Sections for Content -->
+    <div id="overview" class="destination-section">
+        <h2>Overview</h2>
+        <p id="overview-text"></p>
+        <img id="overview-image" class="section-image" src="" alt="Overview Image">
+    </div>
+
+    <div id="things-to-do" class="destination-section">
+        <h2>Things to Do</h2>
+        <ul id="things-to-do-list"></ul>
+    </div>
+
+    <div id="food" class="destination-section">
+        <h2>Popular Food</h2>
+        <ul id="food-list"></ul>
+    </div>
+
+    <!-- Nearby Places Section -->
+    <div id="nearby-places" class="destination-section" style="display: none;">
+        <h2>Nearby Places</h2>
+        <div id="places-list">
+            <p>Click "Nearby Places" to see attractions near the current location.</p>
+        </div>
+    </div>
+
+    <button class="go-back-btn" onclick="window.history.back()">Go Back</button>
+
+    <script>
+        // Map of districts with lat and lon
+        const districtCoordinates = {
+            "Bangalore": { lat: 12.9716, lon: 77.5946 },
+            "Mysore": { lat: 12.2958, lon: 76.6394 },
+            "Chikkamagaluru": { lat:13.4045, lon:75.6208},
+            "Hubli": { lat: 15.3647, lon: 75.1394 },
+            "Coorg": { lat: 12.3344, lon: 95.7519 },
+            "Udupi": { lat: 13.3400, lon: 74.7480 },
+            "Mangalore": { lat: 12.8717, lon: 74.8560 },
+            "Dakshina Kannada": { lat: 12.9157, lon: 75.0820 },
+            "Bagalkote": { lat: 16.1357, lon:  75.6208 },
+            "Chitradurga": { lat: 14.2322, lon: 76.9604 },
+            "Vijayapura": { lat: 16.8290, lon: 75.7152 },
+            "Shivamogga": { lat: 13.9339, lon: 75.5731 },
+            "Uttara Kannada": { lat: 14.5635, lon: 74.1262 },
+            "Vijayanagara": { lat: 15.1968, lon: 76.7941 },
+            "Mandya": { lat: 12.5235, lon: 76.8975 },
+            "Koppal": { lat: 15.3447, lon: 76.1367 },
+            "Kalaburagi": { lat: 17.3273, lon: 76.8327 },
+            "Chikkaballapura": { lat: 13.4216, lon: 77.7343 }
+            
+        };
+
+        // Get the destination from the URL parameters
+        const params = new URLSearchParams(window.location.search);
+        const destinationName = params.get('destination');  // Get destination from URL
+        const { lat, lon } = districtCoordinates[destinationName] || {}; // Get the lat and lon for the destination
+
+        // Set Destination Data
+        function setDestinationData(title, image, overview, overviewImage, thingsToDo, food) {
+            document.getElementById('destination-title').textContent = title;
+            document.getElementById('destination-image').src = image;
+            document.getElementById('overview-text').textContent = overview;
+            document.getElementById('overview-image').src = overviewImage;
+
+            // Populate Things to Do
+            const thingsToDoList = document.getElementById('things-to-do-list');
+            thingsToDoList.innerHTML = '';
+            thingsToDo.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <img src="images/${item.image}" alt="${item.name}" class="section-image"><br>
+                    <strong>${item.name}</strong><br>
+                    <p>${item.description}</p>
+                `;
+                thingsToDoList.appendChild(listItem);
+            });
+
+            // Populate Food
+            const foodList = document.getElementById('food-list');
+            foodList.innerHTML = '';
+            food.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <img src="images/${item.image}" alt="${item.name}" class="section-image"><br>
+                    <strong>${item.name}</strong><br>
+                    <p>${item.description}</p>
+                `;
+                foodList.appendChild(listItem);
+            });
+        }
+
+        // Function to fetch nearby places for a district
+//         function fetchNearbyPlaces(lat, lon) {
+//     const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&radius=10000&q=tourism+attractive&apikey=t2w_eK3SDfhrdHD4Ek-WDYlXYutwZqfEXBn5vRNvv64`;
+
+//     const customImages = {
+//         "Halebeedu Archeological Site": "./images/1.jpg",
+//         "Place Name 2": "./images/place2.jpg",
+//         "Place Name 3": "./images/place3.jpg",
+//         "Place Name 4": "./images/place4.jpg",
+//         "Place Name 5": "./images/place5.jpg",
+//         "Place Name 6": "./images/place6.jpg",
+//     };
+
+//     fetch(apiUrl)
+//         .then(response => response.json())
+//         .then(data => {
+//             const placesList = document.getElementById("places-list");
+//             placesList.innerHTML = "";  // Clear loading message
+
+//             if (data.items && data.items.length > 0) {
+//                 // Get the first 5 places
+//                 const firstFivePlaces = data.items.slice(0, 5);
+
+//                 firstFivePlaces.forEach(place => {
+//                     const placeItem = document.createElement("div");
+//                     placeItem.classList.add("place-item");
+
+//                     const placeName = place.title || "No name available";
+//                     const placeDescription = place.address ? place.address.label : "No description available";
+//                     const placeImage = customImages[placeName] || "./images/placeholder.jpg";
+
+//                     placeItem.innerHTML = `
+//                         <img src="${placeImage}" alt="${placeName}">
+//                         <div class="place-info">
+//                             <h3>${placeName}</h3>
+//                             <p>${placeDescription}</p>
+//                         </div>
+//                     `;
+//                     placesList.appendChild(placeItem);
+//                 });
+//             } else {
+//                 placesList.innerHTML = "<p>No nearby places found.</p>";
+//             }
+//         })
+//         .catch(error => {
+//             console.error("Error fetching places:", error);
+//             document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
+//         });
+// }
+// Function to fetch nearby places for a district
+// function fetchNearbyPlaces(lat, lon) {
+//     const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&radius=10000&q=tourism+attractive&apikey=t2w_eK3SDfhrdHD4Ek-WDYlXYutwZqfEXBn5vRNvv64`;
+
+//     const customImages = {
+//         "Halebeedu Archeological Site": "./images/1.jpg",
+//         "Place Name 2": "./images/place2.jpg",
+//         "Place Name 3": "./images/place3.jpg",
+//         "Place Name 4": "./images/place4.jpg",
+//         "Place Name 5": "./images/place5.jpg",
+//         "Place Name 6": "./images/place6.jpg",
+//     };
+
+//     fetch(apiUrl)
+//         .then(response => response.json())
+//         .then(data => {
+//             const placesList = document.getElementById("places-list");
+//             placesList.innerHTML = "";  // Clear loading message
+
+//             if (data.items && data.items.length > 0) {
+//                 // Get the first 5 places
+//                 const firstFivePlaces = data.items.slice(5,);
+
+//                 firstFivePlaces.forEach(place => {
+//                     const placeName = place.title || "No name available";
+//                     const placeDescription = place.address ? place.address.label : "No description available";
+//                     const placeImage = customImages[placeName] || "./images/placeholder.jpg";
+
+//                     // Fetch weather for each nearby place
+//                     const weatherUrl = `https://api.weatherapi.com/v1/current.json?key=aebaef526c7b4881b9b112333250201&q=${placeName}`;
+
+//                     fetch(weatherUrl)
+//                         .then(weatherResponse => weatherResponse.json())
+//                         .then(weatherData => {
+//                             const weatherDescription = weatherData.current.condition.text;
+//                             const temperature = weatherData.current.temp_c;
+
+//                             // Display the place and weather information
+//                             const placeItem = document.createElement("div");
+//                             placeItem.classList.add("place-item");
+
+//                             placeItem.innerHTML = `
+//                                 <img src="${placeImage}" alt="${placeName}">
+//                                 <div class="place-info">
+//                                     <h3>${placeName}</h3>
+//                                     <p>${placeDescription}</p>
+//                                     <p><strong>Weather:</strong> ${weatherDescription}</p>
+//                                     <p><strong>Temperature:</strong> ${temperature}°C</p>
+//                                 </div>
+//                             `;
+//                             placesList.appendChild(placeItem);
+//                         })
+//                         .catch(error => {
+//                             console.error("Error fetching weather data:", error);
+//                             const placeItem = document.createElement("div");
+//                             placeItem.classList.add("place-item");
+//                             placeItem.innerHTML = `
+//                                 <img src="${placeImage}" alt="${placeName}">
+//                                 <div class="place-info">
+//                                     <h3>${placeName}</h3>
+//                                     <p>${placeDescription}</p>
+//                                     <p><strong>Weather data not available.</strong></p>
+//                                 </div>
+//                             `;
+//                             placesList.appendChild(placeItem);
+//                         });
+//                 });
+//             } else {
+//                 placesList.innerHTML = "<p>No nearby places found.</p>";
+//             }
+//         })
+//         .catch(error => {
+//             console.error("Error fetching places:", error);
+//             document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
+//         });
+// }
+// Function to fetch nearby places for a district
+// function fetchNearbyPlaces(lat, lon) {
+//     const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&radius=10000&q=tourism+attractive&apikey=IKffCIGIIqwrQ1IKWvGvOabDJHmJzkqJkJwDuon9Y-c`;
+
+//     const customImages = {
+//         "Halebeedu Archeological Site": "./images/1.jpg",
+//         "Place Name 2": "./images/place2.jpg",
+//         "Place Name 3": "./images/place3.jpg",
+//         "Place Name 4": "./images/place4.jpg",
+//         "Place Name 5": "./images/place5.jpg",
+//         "Place Name 6": "./images/place6.jpg",
+//     };
+
+//     fetch(apiUrl)
+//         .then(response => response.json())
+//         .then(data => {
+//             const placesList = document.getElementById("places-list");
+//             placesList.innerHTML = "";  
+
+//             if (data.items && data.items.length > 0) {
+              
+//                 const firstFivePlaces = data.items.slice(5,9 );
+
+//                 firstFivePlaces.forEach(place => {
+//                     const placeItem = document.createElement("div");
+//                     placeItem.classList.add("place-item");
+
+//                     const placeName = place.title || "No name available";
+//                     const placeDescription = place.address ? place.address.label : "No description available";
+//                     const placeImage = customImages[placeName] || "./images/placeholder.jpg";
+
+//                     placeItem.innerHTML = `
+//                         <img src="${placeImage}" alt="${placeName}">
+//                         <div class="place-info">
+//                             <h3>${placeName}</h3>
+//                             <p>${placeDescription}</p>
+//                         </div>
+//                     `;
+//                     placesList.appendChild(placeItem);
+//                 });
+//             } else {
+//                 placesList.innerHTML = "<p>No nearby places found.</p>";
+//             }
+//         })
+//         .catch(error => {
+//             console.error("Error fetching places:", error);
+//             document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
+//         });
+// }
+
+// Function to fetch nearby places for a district
+// Function to fetch nearby places for a district
+// Function to fetch nearby places for a district
+
+// Function to fetch nearby places for a district
+// Function to fetch nearby places for a district
+// Function to fetch nearby places for a district
+// function fetchNearbyPlaces(lat, lon) {
+//     const apiKey = "t2w_eK3SDfhrdHD4Ek-WDYlXYutwZqfEXBn5vRNvv64";
+//     const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&radius=10000&q=attractions&apikey=${apiKey}`;
+
+//     // Custom images for specific places
+//     const customImages = {
+//         "Halebeedu Archeological Site": "./images/1.jpg",
+//         "Place Name 2": "./images/place2.jpg",
+//         "Place Name 3": "./images/place3.jpg",
+//         "Place Name 4": "./images/place4.jpg",
+//         "Place Name 5": "./images/place5.jpg",
+//         "Place Name 6": "./images/place6.jpg",
+//     };
+
+//     fetch(apiUrl)
+//         .then(response => response.json())
+//         .then(data => {
+//             const placesList = document.getElementById("places-list");
+//             placesList.innerHTML = "";  
+
+//             if (data.items && data.items.length > 0) {
+//                 // Filter for tourist places, excluding complexes, roads, etc.
+//                 const touristPlaces = data.items.filter(place => {
+//                     const categories = place.categories || [];
+                    
+//                     // Check if place is a tourist attraction
+//                     const isTouristPlace = categories.some(category =>
+//                         category.id.includes("tourist-attraction") ||
+//                         category.name.toLowerCase().includes("tourist") ||
+//                         category.name.toLowerCase().includes("attraction")
+//                     );
+
+//                     // Exclude undesired types
+//                     const undesiredKeywords = ["complex", "road", "street", "highway"];
+//                     const containsUndesiredKeyword = undesiredKeywords.some(keyword =>
+//                         place.title.toLowerCase().includes(keyword)
+//                     );
+
+//                     return isTouristPlace && !containsUndesiredKeyword;
+//                 });
+
+//                 // Limit results to 5–6 places
+//                 const limitedPlaces = touristPlaces.slice(0, 6);
+
+//                 if (limitedPlaces.length > 0) {
+//                     // Generate HTML for each tourist place
+//                     limitedPlaces.forEach(place => {
+//                         const placeItem = document.createElement("div");
+//                         placeItem.classList.add("place-item");
+
+//                         const placeName = place.title || "No name available";
+//                         const placeDescription = place.address ? place.address.label : "No description available";
+//                         const placeImage = customImages[placeName] || "./images/placeholder.jpg";
+
+//                         placeItem.innerHTML = `
+//                             <img src="${placeImage}" alt="${placeName}">
+//                             <div class="place-info">
+//                                 <h3>${placeName}</h3>
+//                                 <p>${placeDescription}</p>
+//                             </div>
+//                         `;
+//                         placesList.appendChild(placeItem);
+//                     });
+//                 } else {
+//                     placesList.innerHTML = "<p>No nearby tourist places found.</p>";
+//                 }
+//             } else {
+//                 placesList.innerHTML = "<p>No nearby places found.</p>";
+//             }
+//         })
+//         .catch(error => {
+//             console.error("Error fetching places:", error);
+//             document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
+//         });
+// }
+
+// function fetchNearbyPlaces(lat, lon) {
+//     const apiKey = "t2w_eK3SDfhrdHD4Ek-WDYlXYutwZqfEXBn5vRNvv64";
+//     const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&radius=10000&q=attractions&apikey=${apiKey}`;
+
+//     // Custom images for specific places
+//     const customImages = {
+//     "Kaup Village": "./images/up1.png",
+//     "Varanga Lake": "./images/up2.png",
+//     "Sasihithlu Beach": "./images/up3.png",
+//     "Venkataramana Swami Devasthanam": "./images/up4.png",
+//     "Trasi Beach": "./images/up5.png",
+//     "Shri Durga Maata Statue": "./images/v1.png",
+//     "Shivavilas Palace": "./images/v2.png",
+//     "Kannada University": "./images/v3.png",
+//     "Shivlinga": "./images/v4.png",
+//     "Mahanavami Dibba Hampi": "./images/v5.png",
+//     "Sangam": "./images/m1.png",
+//     "Dariya Daulat Palace - Tipu Sultan's Summer Palace": "./images/m2.png",
+//     "Spot Where Tipus Body Was Found": "./images/m3.png",
+//     "Hirode Kere Lake": "./images/m4.png",
+//     "Colonel Baileys Dungeon": "./images/m5.png",
+//     "Unkal Lake-Main Entrance": "./images/h1.png",
+//     "Unkal Lake-Entrance 1": "./images/h2.png",
+//     "Kempkeri Lake": "./images/h3.png",
+//     "Navalur Lake": "./images/h4.png",
+//     "Mini Vidhanasoudha": "./images/h5.png",
+//     "Mundargi Fort": "./images/k1.png",
+//     "Narasimha Statue": "./images/k2.png",
+//     "Group of Monuments at Hampi": "./images/k3.png",
+//     "Virupaksha Temple": "./images/k4.png",
+//     "Pushkarani": "./images/k5.png",
+//     "Aiahole": "./images/x1.png",
+//     "Group of Monuments at Pattadakal": "./images/x2.png",
+//     "Badami Cave Temples": "./images/x3.png",
+//     "Badami": "./images/x4.png",
+//     "Amingad Swagat Arch": "./images/x5.png",
+//     "Origin of Palar River": "./images/kk1.png",
+//     "Nandi Hill Caves": "./images/kk2.png",
+//     "Statue of Maha Shiva Adiyogi": "./images/kk3.png",
+//     "Nandi Water Falls": "./images/kk4.png",
+//     "Cubbon House": "./images/kk5.png",
+//     "Kasturi Rangappa Nayaka Fort": "./images/cc1.png",
+//     "Chitradurga Golden Jubilee Center": "./images/cc2.png",
+//     "Chitradurga Fort": "./images/cc3.png",
+//     "Jogimatti Hill Station": "./images/cc4.png",
+//     "Onake Obavva Kindi": "./images/cc5.png",
+//     "Pilikula Nisargadhama": "./images/dd1.png",
+//     "Anekallu Bridge": "./images/dd2.png",
+//     "Koti-Chennaya Jodukare Kambala": "./images/dd3.png",
+//     "Shri Yogeshwar Mutt": "./images/dd4.png",
+//     "Kadri Park": "./images/dd5.png"
+
+
+
+
+
+// };
+
+
+
+//     fetch(apiUrl)
+//         .then(response => response.json())
+//         .then(data => {
+//             const placesList = document.getElementById("places-list");
+//             placesList.innerHTML = "";
+            
+
+//             if (data.items && data.items.length > 0) {
+//                 // Filter for tourist places, excluding hotels, food-related places, and specific exclusions
+//                 const touristPlaces = data.items.filter(place => {
+//                     const categories = place.categories || [];
+
+//                     // Check if place is a tourist attraction
+//                     const isTouristPlace = categories.some(category =>
+//                         category.id.includes("tourist-attraction") ||
+//                         category.name.toLowerCase().includes("tourist") ||
+//                         category.name.toLowerCase().includes("attraction")
+//                     );
+
+//                     // Exclude undesired types
+//                     const undesiredKeywords = ["complex", "road", "street", "highway", "hotel", "restaurant", "food"];
+//                     const containsUndesiredKeyword = undesiredKeywords.some(keyword =>
+//                         place.title.toLowerCase().includes(keyword)
+//                     );
+
+//                     // Explicitly exclude Daroji Bear Sanctuary and Daroji Bear Wildlife Sanctuary
+//                     const isExcludedPlace = place.title && (
+//     place.title.toLowerCase().includes("daroji bear sanctuary") ||
+//     place.title.toLowerCase().includes("daroji bear wildlife sanctuary") ||
+//     place.title.toLowerCase().includes("lohia nagar lake") ||
+//     place.title.toLowerCase().includes("tarihal pond")
+// );
+
+// return isTouristPlace && !containsUndesiredKeyword && !isExcludedPlace;
+// });
+
+//                 // Limit results to 5–6 places
+//                 const limitedPlaces = touristPlaces.slice(5, 10);
+
+//                 if (limitedPlaces.length > 0) {
+//                     // Generate HTML for each tourist place
+//                     limitedPlaces.forEach(place => {
+//                         const placeItem = document.createElement("div");
+//                         placeItem.classList.add("place-item");
+
+//                         const placeName = place.title || "No name available";
+//                         const placeDescription = place.address ? place.address.label : "No description available";
+//                         const placeImage = customImages[placeName] || "./images/placeholder.jpg";
+
+//                         const placeImageElement = document.createElement("img");
+//                         placeImageElement.src = placeImage;
+//                         placeImageElement.alt = placeName;
+//                         placeImageElement.height = 250; // Set height
+//                         placeImageElement.width = 350; // Set width
+
+//                         placeItem.innerHTML = `
+//                             <div class="place-info">
+//                                 <h3>${placeName}</h3>
+//                                 <p>${placeDescription}</p>
+//                             </div>
+//                         `;
+//                         placeItem.insertBefore(placeImageElement, placeItem.firstChild);
+//                         placesList.appendChild(placeItem);
+//                     });
+//                 } else {
+//                     placesList.innerHTML = "<p>No nearby tourist places found.</p>";
+//                 }
+//             } else {
+//                 placesList.innerHTML = "<p>No nearby places found.</p>";
+//             }
+//         })
+//         .catch(error => {
+//             console.error("Error fetching places:", error);
+//             document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
+//         });
+// }
+// function fetchNearbyPlaces(lat, lon) {
+//     const apiKey = "FYqZUYaN_lnI5q_gMnia0RVAX01qcErOBySdGkb_FEI";
+//     const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&radius=10000&q=attractions&apikey=${apiKey}`;
+
+//     // Custom images for specific places
+//     const customImages = {
+//         "Kaup Village": "./images/up1.png",
+//         "Varanga Lake": "./images/up2.png",
+//         "Sasihithlu Beach": "./images/up3.png",
+//         "Venkataramana Swami Devasthanam": "./images/up4.png",
+//         "Trasi Beach": "./images/up5.png",
+//         "Shri Durga Maata Statue": "./images/v1.png",
+//         "Shivavilas Palace": "./images/v2.png",
+//         "Kannada University": "./images/v3.png",
+//         "Shivlinga": "./images/v4.png",
+//         "Mahanavami Dibba Hampi": "./images/v5.png",
+//         "Sangam": "./images/m1.png",
+//         "Dariya Daulat Palace - Tipu Sultan's Summer Palace": "./images/m2.png",
+//         "Spot Where Tipus Body Was Found": "./images/m3.png",
+//         "Hirode Kere Lake": "./images/m4.png",
+//         "Colonel Baileys Dungeon": "./images/m5.png",
+//         "Unkal Lake-Main Entrance": "./images/h1.png",
+//         "Unkal Lake-Entrance 1": "./images/h2.png",
+//         "Kempkeri Lake": "./images/h3.png",
+//         "Navalur Lake": "./images/h4.png",
+//         "Mini Vidhanasoudha": "./images/h5.png",
+//         "Mundargi Fort": "./images/k1.png",
+//         "Narasimha Statue": "./images/k2.png",
+//         "Group of Monuments at Hampi": "./images/k3.png",
+//         "Virupaksha Temple": "./images/k4.png",
+//         "Pushkarani": "./images/k5.png",
+//         "Aiahole": "./images/x1.png",
+//         "Group of Monuments at Pattadakal": "./images/x2.png",
+//         "Badami Cave Temples": "./images/x3.png",
+//         "Badami": "./images/x4.png",
+//         "Amingad Swagat Arch": "./images/x5.png",
+//         "Origin of Palar River": "./images/kk1.png",
+//         "Nandi Hill Caves": "./images/kk2.png",
+//         "Statue of Maha Shiva Adiyogi": "./images/kk3.png",
+//         "Nandi Water Falls": "./images/kk4.png",
+//         "Cubbon House": "./images/kk5.png",
+//         "Kasturi Rangappa Nayaka Fort": "./images/cc1.png",
+//         "Chitradurga Golden Jubilee Center": "./images/cc2.png",
+//         "Chitradurga Fort": "./images/cc3.png",
+//         "Jogimatti Hill Station": "./images/cc4.png",
+//         "Onake Obavva Kindi": "./images/cc5.png",
+//         "Pilikula Nisargadhama": "./images/dd1.png",
+//         "Anekallu Bridge": "./images/dd2.png",
+//         "Koti-Chennaya Jodukare Kambala": "./images/dd3.png",
+//         "Shri Yogeshwar Mutt": "./images/dd4.png",
+//         "Kadri Park": "./images/dd5.png"
+//     };
+
+//     fetch(apiUrl)
+//         .then(response => response.json())
+//         .then(data => {
+//             const placesList = document.getElementById("places-list");
+//             placesList.innerHTML = "";
+
+//             if (data.items && data.items.length > 0) {
+//                 // Filter for tourist places, excluding hotels, food-related places, and specific exclusions
+//                 const touristPlaces = data.items.filter(place => {
+//                     const categories = place.categories || [];
+
+//                     // Check if place is a tourist attraction
+//                     const isTouristPlace = categories.some(category =>
+//                         category.id.includes("tourist-attraction") ||
+//                         category.name.toLowerCase().includes("tourist") ||
+//                         category.name.toLowerCase().includes("attraction")
+//                     );
+
+//                     // Exclude undesired types (complex, roads, streets, highways, food, and hotels)
+//                     const undesiredKeywords = ["complex", "road", "street", "highway", "hotel", "restaurant", "food"];
+//                     const containsUndesiredKeyword = undesiredKeywords.some(keyword =>
+//                         place.title.toLowerCase().includes(keyword)
+//                     );
+
+//                     // Explicitly exclude certain places including "108ft Basaveshwara Statue", "Fort", etc.
+//                     const isExcludedPlace = place.title && (
+//                         place.title.toLowerCase().includes("108ft basaveshwara statue") ||
+//                         place.title.toLowerCase().includes("fort") ||
+//                         place.title.toLowerCase().includes("chudimahal") ||
+//                         place.title.toLowerCase().includes("bhusani dam") ||
+//                         place.title.toLowerCase().includes("akkalkot fort") ||
+//                         place.title.toLowerCase().includes("daroji bear sanctuary") ||
+//                         place.title.toLowerCase().includes("daroji bear wildlife sanctuary") ||
+//                         place.title.toLowerCase().includes("lohia nagar lake") ||
+//                         place.title.toLowerCase().includes("tarihal pond")
+//                     );
+
+//                     // Return only tourist places that don't contain undesired keywords and are not in the excluded list
+//                     return isTouristPlace && !containsUndesiredKeyword && !isExcludedPlace;
+//                 });
+
+//                 // Limit results to 5–6 places
+//                 const limitedPlaces = touristPlaces.slice(5,9 );
+
+//                 if (limitedPlaces.length > 0) {
+//                     // Generate HTML for each tourist place
+//                     limitedPlaces.forEach(place => {
+//                         const placeItem = document.createElement("div");
+//                         placeItem.classList.add("place-item");
+
+//                         const placeName = place.title || "No name available";
+//                         const placeDescription = place.address ? place.address.label : "No description available";
+//                         const placeImage = customImages[placeName] || "./images/placeholder.jpg";
+
+//                         const placeImageElement = document.createElement("img");
+//                         placeImageElement.src = placeImage;
+//                         placeImageElement.alt = placeName;
+//                         placeImageElement.height = 250; // Set height
+//                         placeImageElement.width = 350; // Set width
+
+//                         placeItem.innerHTML = `
+//                             <div class="place-info">
+//                                 <h3>${placeName}</h3>
+//                                 <p>${placeDescription}</p>
+//                             </div>
+//                         `;
+//                         placeItem.insertBefore(placeImageElement, placeItem.firstChild);
+//                         placesList.appendChild(placeItem);
+//                     });
+//                 } else {
+//                     placesList.innerHTML = "<p>No nearby tourist places found.</p>";
+//                 }
+//             } else {
+//                 placesList.innerHTML = "<p>No nearby places found.</p>";
+//             }
+//         })
+//         .catch(error => {
+//             console.error("Error fetching places:", error);
+//             document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
+//         });
+
+        
+// }
+
+function fetchNearbyPlaces(lat, lon) {
+    const apiKey = "t2w_eK3SDfhrdHD4Ek-WDYlXYutwZqfEXBn5vRNvv64";
+    const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&radius=10000&q=attractions&apikey=${apiKey}`;
+
+    // Custom images for specific places
+    const customImages = {
+        "Kaup Village": "./images/up1.png",
+        "Varanga Lake": "./images/up2.png",
+        "Sasihithlu Beach": "./images/up3.png",
+        "Venkataramana Swami Devasthanam": "./images/up4.png",
+        "Trasi Beach": "./images/up5.png",
+        // Add other custom images as needed
+    };
+
+    // Haversine formula to calculate distance
+    function haversine(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Earth radius in kilometers
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in kilometers
+    }
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("API request failed with status: " + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const placesList = document.getElementById("places-list");
+            placesList.innerHTML = "";
+
+            console.log('API Data:', data); // Debugging: Log the entire API response
+
+            if (data.items && data.items.length > 0) {
+                // Log how many items we are working with
+                console.log('Found ' + data.items.length + ' places in the response.');
+
+                // Filter for places with coordinates
+                const placesWithCoordinates = data.items.filter(place => {
+                    return place.position && place.position[0] && place.position[1]; // Only consider places with valid coordinates
+                });
+
+                console.log('Filtered Places with Coordinates:', placesWithCoordinates); // Debugging: Check filtered places
+
+                if (placesWithCoordinates.length > 0) {
+                    // Map places to include distance calculations
+                    const placesWithDistance = placesWithCoordinates.map(place => {
+                        const placeLat = place.position[0];
+                        const placeLon = place.position[1];
+                        const distance = haversine(lat, lon, placeLat, placeLon); // Calculate distance
+                        return { place, distance };
+                    });
+
+                    // Sort places by distance
+                    const sortedPlaces = placesWithDistance.sort((a, b) => a.distance - b.distance);
+
+                    // Limit results to top 5 places
+                    const limitedPlaces = sortedPlaces.slice(0, 5);
+
+                    // Display places
+                    limitedPlaces.forEach(item => {
+                        const place = item.place;
+                        const placeItem = document.createElement("div");
+                        placeItem.classList.add("place-item");
+
+                        const placeName = place.title || "No name available";
+                        const placeDescription = place.address ? place.address.label : "No description available";
+                        const placeImage = customImages[placeName] || "./images/placeholder.jpg";
+
+                        const placeImageElement = document.createElement("img");
+                        placeImageElement.src = placeImage;
+                        placeImageElement.alt = placeName;
+                        placeImageElement.height = 250; // Set height
+                        placeImageElement.width = 350; // Set width
+
+                        placeItem.innerHTML = `
+                            <div class="place-info">
+                                <h3>${placeName}</h3>
+                                <p>${placeDescription}</p>
+                            </div>
+                        `;
+                        placeItem.insertBefore(placeImageElement, placeItem.firstChild);
+                        placesList.appendChild(placeItem);
+                    });
+                } else {
+                    placesList.innerHTML = "<p>No places with valid coordinates found.</p>";
+                }
+            } else {
+                placesList.innerHTML = "<p>No places found in the API response.</p>";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching places:", error);
+            document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
+        });
+}
+//r the selected destination sahana
+        if (destinationName) if (destinationName === "Bangalore") {
+            setDestinationData(
+                "Bangalore ",
+                "images/vidhan.webp",
+                "Bangalore, also known as Bengaluru, is the vibrant capital of Karnataka and one of India’s most dynamic cities. Often referred to as the Silicon Valley of India due to its thriving IT industry, Bangalore is a perfect blend of modernity and tradition. The city is famous for its pleasant climate, lush parks, and vibrant cultural scene. From iconic landmarks like the Bangalore Palace and Lalbagh Botanical Garden to bustling markets and trendy cafes, Bangalore offers something for every traveler. Whether you're exploring its rich history, indulging in its culinary delights, or enjoying its nightlife, Bangalore stands as a city of endless possibilities and a hub of innovation and culture.",
+                "images/bnglr-1.jpeg", 
+                [
+                    { name: "🌳 Visit Lalbagh Botanical Garden", image: "lalbhagh.png", description: "Lalbagh Botanical Garden is one of the oldest and most well-maintained gardens in India, located in the heart of Bangalore. Spread across 240 acres, it is home to a wide variety of plants, trees, and flowers, some of which are rare and exotic. The garden is known for its iconic glasshouse, which hosts an annual flower show, and its peaceful walking paths, lakes, and historic sites. Lalbagh is a perfect escape for nature lovers, photographers, and anyone seeking a tranquil retreat amidst the hustle and bustle of the city." },
+                    { name: "🏰 Explore Cubbon Park", image: "cubbon.jpg", description: "Cubbon Park, another green oasis in Bangalore, offers a serene environment with its expansive lawns, tall trees, and picturesque pathways. Located in the center of the city, it is a popular spot for morning jogs, leisurely walks, and picnics. The park also houses various monuments, statues, and government buildings, adding to its historical significance. With its calming ambiance and lush greenery, Cubbon Park provides a refreshing break for both locals and tourists." },
+                    { name: "🛍 Visit MG Road", image: "com.jpg", description: "MG Road (Mahatma Gandhi Road) is one of Bangalore’s most iconic streets, known for its bustling atmosphere, shopping arcades, and vibrant eateries. It is a major commercial hub, featuring a mix of traditional markets, high-end boutiques, and modern shopping malls. Visitors can enjoy a variety of experiences here, from retail therapy to indulging in local street food. MG Road also boasts several cafes, restaurants, and bars, making it a lively spot to relax and soak in the city's energetic vibe." },
+                    { name: "🎨 Bangalore Palace", image: "bangalore-1.png", description: "Bangalore Palace, an architectural marvel, stands as a testament to the grandeur of the Wodeyar dynasty. Built in the Tudor style, the palace is known for its exquisite interiors, which include beautiful wood carvings, stained glass windows, and antique furniture. The sprawling grounds of the palace feature gardens, courtyards, and a regal atmosphere. Visitors can explore the history of the royal family and enjoy the majestic charm of the palace. It is also a venue for cultural events, concerts, and exhibitions, offering a glimpse into Bangalore’s royal past." },
+                    { name: "🙏 ISKCON Temple", image: "iskon.jpg", description: "The ISKCON Temple in Bangalore is a prominent religious and cultural center dedicated to Lord Krishna. Located in the heart of the city, the temple is renowned for its grand architecture, peaceful ambiance, and spiritual significance. The temple complex is beautifully designed with intricate carvings and modern facilities, creating a serene space for meditation, prayers, and devotion. Visitors can witness daily rituals, participate in cultural events, and enjoy the temple’s peaceful surroundings. The temple also has a well-known restaurant offering pure vegetarian food and prasadam, further enhancing the experience for visitors." }
+                ],
+                [
+                    { name: "🍛 Bangalore Biryani", image: "biryani.jpeg", description: "Bangalore Biryani is a flavorful and aromatic rice dish that has become a beloved part of the city’s culinary culture. Known for its rich spices, tender meat (usually chicken or mutton), and fragrant basmati rice, this biryani is distinct from other regional versions with its unique blend of spices and preparation style. The rice is cooked with marinated meat, fried onions, and a mix of fresh herbs, creating a delightful, hearty dish. It is often served with a side of raita (yogurt sauce) or salan (spicy gravy), making it a perfect meal for any occasion." },
+                    { name: "🥘 Ragi Mudde", image: "raggi-mudde.jpeg", description: "Ragi Mudde is a traditional dish made from finger millet (ragi) that is a staple in Karnataka, particularly in rural areas. This dish is made by boiling ragi flour in water to form a soft, dough-like consistency. The ragi mudde is then rolled into round balls and served with spicy curries, dal (lentils), or meat dishes. Ragi Mudde is highly nutritious, rich in fiber, and packed with essential minerals, making it a wholesome and filling meal." }
+                ]
+               
+            );
+        }else if (destinationName === "Chikkamagaluru") {
+    setDestinationData(
+        "Chikkamagaluru ",
+        "images/ckm-1.png",
+        "Popularly known as the ‘Coffee Land of Karnataka’, Chikmagalur is situated in the foothills of the Mullayangiri Range and is one of the most beautiful hill stations in Karnataka. Chikmagalur has a perpetual fragrance of coffee lingering in the air with it plenty of coffee plantations. Famous for its tall mountains, lush green forests and its tranquil environment (apart from its coffee production), Chikmagalur is a very popular tourist destination and is a quick retreat for the people of Karnataka",
+        "images/ckm-2.jpg",
+        [
+            { name: "☕ Explore Coffee Plantations", image: "coffee-plant.png", description: "Walk through lush coffee estates, learn about coffee production, and savor freshly brewed coffee.Witness the journey from bean to cup as experts walk you through planting, harvesting, drying, and roasting processes.Stroll through the plantations, surrounded by lush greenery, chirping birds, and the rich aroma of coffee blossoms.The picturesque landscape, with its vibrant greenery and misty hills, is perfect for photography enthusiasts." },
+            { name: "⛰ Trek to Mullayanagiri", image: "mullayanagiri.png", description: "Mullayanagiri is the highest peak in Karnataka, offering breathtaking views and a thrilling trek.Mullayanagiri is best known as a hub for adventure enthusiasts, especially trekkers as this destination is adorned with perfect trek trails. The starting point of this 4 km trek is Sarpadhari which is a steep trail. One can also engage in other thrilling activities such as mountain biking and road biking. The place is perfect for those looking for solitude as well as visitors with an adventurous streak. Chikmagalur serves as the nearest town to Mullayanagiri peak. You can explore the small caves, which are located just below the peak. There is a temple of Lord Shiva on the hilltop. Standing atop the peak on a clear day, you can see the Western Ghats in their full-fledged glory. " },
+            { name: "🌊 Hirekolale Lake", image: "ckm-lake.png", description: "A peaceful lake surrounded by hills, perfect for a relaxing evening with stunning views.The lake offers the most mesmerizing views of the landscape at the time of twilight and most of the travelers prefer not to miss the view. These scenic views are a treat to ardent photography lovers, especially the sunset shots and the greenery surrounding the lake in the form of Mullayanagiri Hills.The Hirekolale Lake is going to provide you with a perfect getaway to spend some quality time with your friends and loved ones away from the chaos of city life." },
+            { name: "🛕 Baba Budangiri", image: "baba giri.jpg", description: "To the north of Chikkamagalur district of Karnataka, lies the Baba Budan Range of the Western Ghats of India. Baba Budangiri is a mountain in the Baba Budan Range and is renowned for its shrine to the Sufi Saint, Hazrat Dada Hayat Khalandar (also known as Baba Budan). This is a famous pilgrim site for both Hindus and Muslims and is often flocked by travellers. This famous mountain range is also known as Dattagiri Hill Range, as the shrine here is believed to be associated with Hindu God Guru Dattatreya. This mountain range proudly exhibits one of the highest mountain peaks, with altitude lying between that of the Himalayas and the Nilgiris. Legend has it that via the Chikamagalur district, coffee was first brought into India when the coffee crop was grown in Baba Budangiri Hills by Sufi Baba Budan during 1670 AD." }
+        ],
+        [
+            { name: "🍛 Akki Roti", image: "akki roti.avif", description: "Akki Roti is a beloved traditional dish from Karnataka, made primarily with rice flour. Known for its soft, crispy texture and savory flavor, it is a popular breakfast or dinner option in Chikmagalur and across the region.Akki Roti is typically served hot with coconut chutney, spicy chutney powder, or a tangy tomato chutney. Some enjoy it with a dollop of butter or curd for added richness.With its simple yet flavorful ingredients, Akki Roti embodies the essence of Karnataka's rustic, homely cuisine." },
+            { name: "🍲 Kadabu", image: "kadubu.avif", description: "Kadabu is a traditional steamed dumpling from Karnataka, cherished for its soft texture and versatile flavors. It comes in both sweet and savory variations, making it a favorite during festivals and special occasions. The sweet version is filled with a mixture of jaggery, grated coconut, and cardamom, while the savory version features spiced lentils, curry leaves, and herbs. The outer layer is made from rice flour dough, which is carefully shaped into crescents and steamed until tender. Sweet Kadabu is often enjoyed with a drizzle of ghee, while the savory version pairs well with coconut chutney or spicy curry. Simple yet flavorful, Kadabu reflects the comforting and wholesome essence of Karnataka’s cuisine." }
+        ]
+
+
+    );
+} else if (destinationName === "Mysore") {
+            setDestinationData(
+                "Mysore ",
+                "images/m-palace.png",
+                "Mysore, often referred to as the 'Cultural Capital of Karnataka', is a city steeped in history and tradition, located in the southern part of India. Known for its grand palaces, vibrant festivals, and rich cultural heritage, Mysore is a popular destination for both history enthusiasts and tourists alike. The city is home to the iconic Mysore Palace, a stunning architectural marvel, as well as Chamundi Hill, St. Philomena’s Church, and the lush Brindavan Gardens. Mysore is famous for its Dussehra festival, which is celebrated with grand processions and cultural performances. The city’s relaxed atmosphere, combined with its historical significance, makes it an ideal place for exploring ancient monuments, enjoying local delicacies, and experiencing the grandeur of royal Karnataka.",
+                "images/m-1.jpg",
+                [
+                    { name: "🌳 Visit Brindavan Gardens", image: "m-2.jpg", description: "Located about 30 kilometers from Mysore, Brindavan Gardens is a beautifully landscaped garden situated near the Krishna Raja Sagara (KRS) Dam. The garden is famous for its vibrant floral displays, musical fountain, and well-maintained pathways. It is a popular spot for family outings and photography, especially in the evening when the musical fountain comes alive with colorful lights and synchronized music. The gardens offer a perfect blend of natural beauty and architectural wonder, making it one of the most visited attractions in the Mysore region." },
+                    { name: "🎨 Mysore Palace", image: "m-3.jpg", description: "The Mysore Palace is an iconic symbol of Karnataka’s royal heritage and a must-visit landmark in the city. Also known as the Amba Vilas Palace, it is an architectural masterpiece blending Hindu, Muslim, Rajput, and Gothic styles. The palace is the former royal residence of the Wodeyar dynasty and is known for its grandeur, stunning interiors, and intricate carvings. The palace is especially spectacular during the Dussehra festival, when it is illuminated with thousands of lights. Visitors can explore the ornate rooms, including the royal durbar hall and the beautifully decorated corridors." },
+                    { name: "⛪ Chamundeshwari Temple", image: "m-chamundi.jpg", description: "Chamundeshwari Temple, located atop Chamundi Hill, is one of Mysore’s most revered pilgrimage sites. The temple is dedicated to Goddess Chamundeshwari, the principal deity of the city, and is an important part of Mysore’s spiritual heritage. To reach the temple, visitors can climb 1,000 steps, offering a scenic and spiritual journey to the summit. The temple offers panoramic views of the city and surrounding landscapes. It is also home to a massive statue of Nandi, the vehicle of Lord Shiva, and attracts thousands of devotees during the annual Dussehra festival." },
+                    { name: "🌿 St. Philomena's Church", image: "m-church.jpg", description: "St. Philomena’s Church is one of the largest churches in India and a significant landmark in Mysore. Built in a neo-gothic style, the church features beautiful stained glass windows and a towering spire that reaches up to 175 feet, making it an impressive sight. The church is dedicated to St. Philomena, a young Christian martyr, and it is a place of quiet reflection and prayer. The church's architecture, with its high ceilings and intricate details, makes it one of the most beautiful churches in the country. It is a must-visit for anyone interested in architectural beauty and religious history." }
+                ],
+                [
+                    { name: "🍚 Mysore Pak", image: "m-pak.avif", description: "Mysore Pak is a famous sweet dish from Mysore, known for its rich, buttery texture and mouthwatering taste. Made from a blend of chickpea flour (besan), ghee, and sugar, this dessert is often enjoyed during festivals, weddings, and special occasions. The melt-in-your-mouth consistency and the fragrant aroma of ghee make Mysore Pak a beloved delicacy in South India. Over the years, it has become synonymous with Mysore, and no visit to the city is complete without tasting this iconic sweet." },
+                    { name: "🥯 Maddur Vada", image: "m-vada.avif", description: "Maddur Vada is a savory, crispy snack that originates from the town of Maddur, near Mysore. Made with a mixture of rice flour, semolina, and spices like cumin and green chilies, the vada is deep-fried to a golden brown, giving it a crunchy texture. Its unique preparation method involves finely chopped onions, which add a distinct flavor. Often served with coconut chutney or sambar, Maddur Vada is a popular choice for breakfast or an evening snack and is a favorite street food in Mysore and surrounding areas." }
+
+                ]
+            );
+        } if (destinationName === "Bangalore") {
+            setDestinationData(
+                "Bangalore ",
+                "images/vidan.webp",
+                "Bangalore, also known as Bengaluru, is the vibrant capital of Karnataka and one of India’s most dynamic cities. Often referred to as the Silicon Valley of India due to its thriving IT industry, Bangalore is a perfect blend of modernity and tradition. The city is famous for its pleasant climate, lush parks, and vibrant cultural scene. From iconic landmarks like the Bangalore Palace and Lalbagh Botanical Garden to bustling markets and trendy cafes, Bangalore offers something for every traveler. Whether you're exploring its rich history, indulging in its culinary delights, or enjoying its nightlife, Bangalore stands as a city of endless possibilities and a hub of innovation and culture.",
+                "images/bnglr-1.jpeg",
+                [
+                    { name: "🌳 Visit Lalbagh Botanical Garden", image: "lalbhagh.png", description: "Lalbagh Botanical Garden is one of the oldest and most well-maintained gardens in India, located in the heart of Bangalore. Spread across 240 acres, it is home to a wide variety of plants, trees, and flowers, some of which are rare and exotic. The garden is known for its iconic glasshouse, which hosts an annual flower show, and its peaceful walking paths, lakes, and historic sites. Lalbagh is a perfect escape for nature lovers, photographers, and anyone seeking a tranquil retreat amidst the hustle and bustle of the city." },
+                    { name: "🏰 Explore Cubbon Park", image: "cubbon.jpg", description: "Cubbon Park, another green oasis in Bangalore, offers a serene environment with its expansive lawns, tall trees, and picturesque pathways. Located in the center of the city, it is a popular spot for morning jogs, leisurely walks, and picnics. The park also houses various monuments, statues, and government buildings, adding to its historical significance. With its calming ambiance and lush greenery, Cubbon Park provides a refreshing break for both locals and tourists." },
+                    { name: "🛍 Visit MG Road", image: "com.jpg", description: "MG Road (Mahatma Gandhi Road) is one of Bangalore’s most iconic streets, known for its bustling atmosphere, shopping arcades, and vibrant eateries. It is a major commercial hub, featuring a mix of traditional markets, high-end boutiques, and modern shopping malls. Visitors can enjoy a variety of experiences here, from retail therapy to indulging in local street food. MG Road also boasts several cafes, restaurants, and bars, making it a lively spot to relax and soak in the city's energetic vibe." },
+                    { name: "🎨 Bangalore Palace", image: "banglore-1.jpg", description: "Bangalore Palace, an architectural marvel, stands as a testament to the grandeur of the Wodeyar dynasty. Built in the Tudor style, the palace is known for its exquisite interiors, which include beautiful wood carvings, stained glass windows, and antique furniture. The sprawling grounds of the palace feature gardens, courtyards, and a regal atmosphere. Visitors can explore the history of the royal family and enjoy the majestic charm of the palace. It is also a venue for cultural events, concerts, and exhibitions, offering a glimpse into Bangalore’s royal past." },
+                    { name: "🙏 ISKCON Temple", image: "iskon.jpg", description: "The ISKCON Temple in Bangalore is a prominent religious and cultural center dedicated to Lord Krishna. Located in the heart of the city, the temple is renowned for its grand architecture, peaceful ambiance, and spiritual significance. The temple complex is beautifully designed with intricate carvings and modern facilities, creating a serene space for meditation, prayers, and devotion. Visitors can witness daily rituals, participate in cultural events, and enjoy the temple’s peaceful surroundings. The temple also has a well-known restaurant offering pure vegetarian food and prasadam, further enhancing the experience for visitors. ISKCON Bangalore is not only a place of worship but also a hub for spiritual learning and community activities." }
+
+                   
+                ],
+                [
+                    { name: "🍛 Bangalore Biryani", image: "biryani.jpeg", description: "Bangalore Biryani is a flavorful and aromatic rice dish that has become a beloved part of the city’s culinary culture. Known for its rich spices, tender meat (usually chicken or mutton), and fragrant basmati rice, this biryani is distinct from other regional versions with its unique blend of spices and preparation style. The rice is cooked with marinated meat, fried onions, and a mix of fresh herbs, creating a delightful, hearty dish. It is often served with a side of raita (yogurt sauce) or salan (spicy gravy), making it a perfect meal for any occasion. Whether enjoyed in a restaurant or at a street food stall, Bangalore Biryani offers a taste of the city’s rich, diverse food culture." },
+                    { name: "🥘 Ragi Mudde", image: "raggi-mudde.jpeg", description: "Ragi Mudde is a traditional dish made from finger millet (ragi) that is a staple in Karnataka, particularly in rural areas. This dish is made by boiling ragi flour in water to form a soft, dough-like consistency. The ragi mudde is then rolled into round balls and served with spicy curries, dal (lentils), or meat dishes. Ragi Mudde is highly nutritious, rich in fiber, and packed with essential minerals, making it a wholesome and filling meal. The dish is simple yet flavorful, and it holds a special place in the hearts of locals, often enjoyed with ghee and a variety of side dishes." }
+                ]
+            );
+        }else if (destinationName === "Koppal") {
+    setDestinationData(
+        "Koppal ",
+        "images/koopall.png",
+        "Koppal is a historical district in northern Karnataka, rich in cultural heritage and historical significance. Known for its ancient temples, forts, and monuments, Koppal was once a prominent center during the reign of the Vijayanagara Empire. The district is also home to scenic landscapes and rich wildlife, making it an ideal destination for history buffs, nature enthusiasts, and spiritual seekers. It offers a unique blend of architectural grandeur and natural beauty, with places like the Anegundi Fort and Panchalinga Temple drawing visitors from across the country.",
+        "images/koppal-overview.jpg",
+        [
+            { name: "🏰 Anegundi Fort", image: "kangudi.jpg", description: "Anegundi Fort is an ancient fort situated on the banks of the Tungabhadra River, offering breathtaking views of the surrounding hills and river. Known for its strategic location, this fort is one of the oldest structures in the region and plays a significant role in the history of the Vijayanagara Empire." },
+            { name: "🕌 Koppal Fort", image: "kfort.jpeg", description: "Koppal Fort is a historical fort located in the heart of Koppal town. This well-preserved fort is famous for its massive defensive walls, watchtowers, and ancient gateways. The fort provides an insight into the region's rich military history and is a great spot for history enthusiasts." },
+            { name: "🌿 Panchalinga Temple", image: "kpancha.jpeg", description: "The Panchalinga Temple is a revered religious site dedicated to Lord Shiva. The temple is unique for its five shrines, each housing a Shiva Lingam, symbolizing the five elements. The temple is known for its intricate carvings and peaceful surroundings, making it a favorite among devotees and photographers." },
+            { name: "🌳 Saraswati Temple", image: "kdevi.jpeg", description: "Saraswati Temple is a historical temple dedicated to the goddess Saraswati, the deity of knowledge and wisdom. Located in a serene environment, the temple is known for its beautiful stone carvings and intricate architecture. It is a popular pilgrimage site for students and scholars seeking blessings for their studies." },
+           
+        ],
+        [
+            { name: "🍚 Jolad Roti", image: "vroti.jpeg", description: "Jolad Roti is a traditional North Karnataka dish made from sorghum flour. It is usually served with spicy chutneys, curries, and vegetables, offering a wholesome and nutritious meal. A staple food in rural Karnataka, Jolad Roti is known for its rustic taste and is loved by locals and tourists alike." },
+            { name: "🍲 Bisi Bele Bath", image: "kbisibali.png", description: "Bisi Bele Bath is a traditional South Indian dish made of rice, lentils, and vegetables, cooked with a unique blend of spices. This dish is served hot and is typically accompanied by papad and chutneys. A comfort food popular in Karnataka, Bisi Bele Bath is loved for its flavorful and tangy taste." },
+            { name: "🍬 Shevnga Holige", image: "kshenga.png", description: "Shenga Holige, also known as Peanut Holige, is a sweet flatbread stuffed with a mixture of ground peanuts, jaggery, and coconut. This traditional sweet dish is especially popular in Karnataka and is enjoyed during festivals and special occasions. The crispy outer layer and the sweet, nutty filling make it a beloved snack." },
+            { name: "🍞 Chapati with Badanekayi Ennegai", image: "kcahapti.png", description: "Chapati with Badanekayi Ennegai is a delicious and traditional North Karnataka dish. Badanekayi Ennegai is a spicy brinjal (eggplant) curry made with a mix of aromatic spices, which is a perfect accompaniment to soft chapatis. This dish is a comfort food that combines the warmth of chapatis with the rich, flavorful curry, loved by locals and visitors alike." }
+        ]
+    );
+}else if (destinationName === "Vijayapura") {
+    setDestinationData(
+        "Vijayapur ",
+        "images/bijapur.png",
+        "Vijayapur (formerly known as Bijapur) is a historic city in Karnataka, renowned for its Islamic architecture and rich cultural heritage. It was the capital of the Adil Shahi dynasty and features some of the finest examples of Deccan Sultanate art and architecture.Vijayapura (formerly called Bijapur), is located in the northern part of Karnataka; surrounded by Solapur on the North and Sangali on the North-West (both Maharashtra), Belagavi on the West, Bagalkote on the South, Kalaburgi on the East and by Raichur on the South-East.Vijayapur was a gateway to the Deccan Sultanate which extended from North Karnataka to central India. Located in the historically rich Deccan, the city was established in the 10th-11th centuries by the Kalyani Chalukyas and was ruled by various dynasties including the Adil Shahi kings who have had a major influence on the region. It is dotted with mosques, mausoleums, palaces, fortifications, watchtowers, and strong gateways, with the massive Gol Gumbaz dominating the landscape for miles around. Vijayapura itself has over 50 mosques, more than 20 tombs and a number of palaces.Under the Adil Shahi kings, Vijayapura became a culturally rich kingdom and attracted scholars, musicians, artists etc from far and wide including Persia and Arabia. The Mushaira or poetic symposium is believed to have originated here, and later travelled to North India",
+        "images/vijayapur-overview.jpg",
+        [
+            { name: "🌟 Gol Gumbaz", image: "vgol.jpg", description: "The Gol Gumbaz is a mausoleum of Mohammed Adil Shah, known for its gigantic dome and unique acoustic features. Gaze in wonder at this magnificent 210 ft high mausoleum of Mohammed Adil Shah, built with features like seven storied octagonal spires at the four corners and heavy bracketed cornice below the parapet. It is home to the world’s second largest dome which is unsupported by pillars (slightly smaller than St Peter’s Basilica in Rome). Bijapura Gol Gumbaz also has the whispering gallery (an architectural and acoustic wonder) – called so because even the finest whisper or sound made in it is echoed over 10 times." },
+            { name: "🏰 Ibrahim Rauza", image: "vi.jpeg", description: "Often called the 'Taj Mahal of the Deccan,' this tomb is known for its intricate carvings and elegant design.Ibrahim Roza Said to be the inspiration for the Taj Mahal in Agra, this palatial mosque and tomb in Vijayapura is rated as on one of the most beautifully proportioned Islamic monuments in India. This mausoleum has two buildings standing on a common platform, supported by arches and enclosed by gardens on three sides." },
+            { name: "🕌 Bara Kaman", image: "vbarakaman.jpeg", description: "An unfinished tomb that stands as a testament to the architectural ambitions of the Adil Shahi rulers.The incomplete mausoleum of Ali Adil Shah II with its 12 graceful arches. Bara Kaman was the royal tomb of Ali Adil Shah II whose construction probably begun on his accession to the throne and was intended to rival Gol Gumbaz, the tomb of his father. Though, the building was conceived on a magnificent scale but it was destined never to be completed." },
+            { name: "🌿 Shivagiri", image: "vshiva.jpeg", description: "Shivagiri is known for its towering Shiva statue, symbolizing peace and spirituality, and is a must-visit site in Vijayapur.The temple houses a 85-foot (26 m) tall statue of Lord Shiva and is gradually developing as a pilgrimage place. The statue is around 1,500 tons in weight and considered as the second biggest statue of Lord Shiva in the country. A small idol of Shivalinga is installed beneath the big statue." }
+        ], 
+        [
+            { name: "🍲 Jolad Roti Oota", image: "vroti.jpeg", description: "A traditional North Karnataka meal with sorghum roti, chutneys, and spicy side dishes.It can be taken with chutney pudi , Gurellu/Huchchellu chutney powder, chilly chutney, pickles, and other vegetarian side dishes too. Jowar roti or jowar bhakri are flat thin bread made of sorghum flour. The jowar flour is totally gluten-free and makes good unleavened bread, tasty and healthy" },
+            { name: "🍛 Khara Mandakki", image: "vkaraman.jpeg", description: "A popular snack made from puffed rice, peanuts, and spicy seasonings.Khara mandakki or khara kadlepuri is a tea time snacks recipe prepared using thin puffed rice, peanuts, roasted gram, green chili, garlic, red chili powder and few other spices. This is a north Karnataka style khara mandakki or spicy puffed rice recipe. It is best served with a cup of tea." },
+            { name: "🍜 Basundi", image: "vbasundi.jpeg", description: "A rich and creamy dessert made with thickened milk, flavored with cardamom and saffron. Basundi is slow-cooked to achieve its luscious consistency, garnished with nuts like almonds and pistachios for added texture and flavor. It is often served chilled and is a popular treat during festivals and special occasions in Vijayapur and across Karnataka." 
+},
+  ]
+    );
+}else if (destinationName === "Coorg") {
+    setDestinationData(
+        "Coorg ",
+        "images/in.png",
+         "Coorg, also known as Kodagu, is a lush hill station located in Karnataka. Famous for its coffee plantations, misty hills, and cascading waterfalls, Coorg is often referred to as the 'Scotland of India.' It offers a perfect blend of natural beauty, adventure activities, and rich cultural heritage. With its serene environment and aromatic coffee estates, Coorg is a sought-after destination for travelers seeking peace and adventure alike.",
+       "images/coorg-overview.jpg",
+        [
+            { 
+                name: "🌳 Coffee Plantations", 
+                image: "coffeeplant.png", 
+                description: "Walk through Coorg's aromatic coffee estates and learn about the fascinating journey of coffee production, from seed to cup. These plantations are not only scenic but also provide a haven for diverse flora and fauna. Engage with local guides to uncover the region’s coffee history, cultivation techniques, and unique flavors. Visitors can even try their hand at coffee picking during harvest season. The serene ambiance of these plantations, combined with the invigorating aroma of coffee blossoms, makes this a must-visit experience."   },
+            { 
+                name: "🌊 Abbey Falls", 
+                image: "abhay.png", 
+                description: "Marvel at the beauty of Abbey Falls as it cascades amidst lush greenery and rocky terrain. This popular tourist spot offers a refreshing escape, with its cool mist and roaring waters creating a serene atmosphere. The bridge near the falls provides an excellent vantage point for capturing stunning photographs. Surrounding coffee and spice plantations add to the area’s charm, making the visit even more memorable. The falls are a favorite among nature lovers and a great spot for a rejuvenating getaway." 
+            },
+            { 
+                name: "🛕 Omkareshwara Temple", 
+                image: "om.png", 
+                description: "Visit the Omkareshwara Temple, a unique blend of Gothic and Islamic architecture dedicated to Lord Shiva. Its tranquil ambiance and historical significance draw both spiritual seekers and history enthusiasts. The temple’s serene water tank, teeming with fish, adds to its peaceful charm. Built in 1820 by King Lingarajendra II, the temple reflects a mix of cultures and architectural styles. Surrounded by lush greenery, the temple offers a serene retreat for meditation and spiritual exploration." 
+              },
+            { 
+                name: "🌿 Raja’s Seat", 
+                image: "raja.png", 
+                description:  "Enjoy breathtaking valley views from Raja’s Seat, a historic garden once frequented by Coorg’s kings. This vantage point is known for its captivating sunrise and sunset views, with mist rolling over the hills in the background. The garden, adorned with seasonal flowers, creates a picturesque setting for visitors. Musical fountains in the evening add to the allure, making it an excellent spot for families and couples. The tranquil environment and panoramic scenery make it a must-visit destination in Coorg." 
+            },
+            { 
+                name: "⛰ Mandalpatti", 
+                image: "madalpakki.png", 
+                description: "Embark on a thrilling trek to Mandalpatti, an offbeat destination offering panoramic views of Coorg’s misty landscapes. The journey through winding roads and lush forests is an adventure in itself. Once at the top, the breathtaking scenery of rolling hills and expansive valleys is a sight to behold. The peaceful ambiance and cool mountain breeze provide a refreshing escape from urban life. Ideal for trekkers and nature enthusiasts, Mandalpatti offers a perfect blend of adventure and serenity." 
+            }
+        ],
+        [
+            { 
+                name: "🍛 Pandi Curry", 
+                image: "pandicurry.png", 
+                description:  "Relish Coorg’s signature dish, Pandi Curry, a spicy pork curry cooked with Coorg’s special vinegar (Kachampuli). The bold flavors and rich, tender meat make it a favorite among locals and visitors alike. This dish is traditionally served with Akki Roti or steamed rice, creating a delightful combination. Known for its deep, earthy taste, Pandi Curry is a testament to Coorg’s rich culinary heritage. It’s a must-try for anyone exploring the authentic flavors of Karnataka." 
+            },
+            { 
+                name: "🍲 Bamboo Shoot Curry", 
+                image: "bamboo.png", 
+                description: "Try the seasonal Bamboo Shoot Curry, a traditional dish infused with coconut and aromatic spices. This dish highlights the earthy flavors of fresh bamboo shoots, a monsoon delicacy in Coorg. Prepared with minimal processing, it retains the natural taste and texture of bamboo. The curry pairs perfectly with steamed rice and is a healthy, nutritious option. Its rich, flavorful profile captures the essence of Coorg’s unique and sustainable cuisine." 
+             },
+            { 
+                name: "🍚 Noolputtu with Chicken Curry", 
+                image: "noolpattu.png", 
+                description:  "Savor the delicate rice noodles, Noolputtu, served with a flavorful chicken curry. The noodles, made from steamed rice flour, have a soft and light texture that complements the robust curry. This combination is a staple in Coorg households and reflects the region’s simple yet satisfying culinary traditions. The subtle flavors of Noolputtu balance the spices of the curry, creating a harmonious dish. Perfect for breakfast or lunch, it’s a must-try for food lovers visiting Coorg." 
+            },
+            { 
+                name: "🍵 Coorg Coffee", 
+                image: "coorag coffee.png", 
+                description:  "Indulge in a cup of freshly brewed Coorg coffee, celebrated for its rich aroma and smooth flavor. Grown in the lush plantations of Coorg, this coffee has a distinctive taste that sets it apart. Many coffee estates offer tastings and workshops, providing a deeper appreciation for this beloved beverage. Known for its robust and slightly chocolatey notes, Coorg coffee is a favorite among connoisseurs. It’s a perfect way to experience the essence of Coorg’s culture and landscape." 
+            }
+        ]
+      
+    );
+}else if (destinationName === "Bagalkote") {
+    setDestinationData(
+        "Bagalkot ",
+        "images/innerbk.png",
+        "Bagalkot, located in Karnataka, is a region rich in history, architecture, and culture. Known for its ancient temples and historical monuments, Bagalkot offers a glimpse into the glorious past of the Chalukya dynasty. It is home to UNESCO World Heritage sites, breathtaking landscapes, and a vibrant local culture. From ancient caves to tranquil rivers, Bagalkot is a destination that promises a unique blend of spirituality, history, and natural beauty.",
+        "images/bagalkot-overview.jpg",
+        [
+            { 
+                name: "🏛 Badami Cave Temples", 
+                image: "vbadami.jpeg", 
+                description: "Explore the Badami Cave Temples, an architectural marvel carved out of red sandstone cliffs. These caves, dedicated to Hindu and Jain deities, feature intricate carvings and sculptures showcasing the Chalukyan style. The serene Agastya Lake nearby adds to the beauty of the surroundings. Visitors can marvel at the exquisite craftsmanship and panoramic views of the surrounding hills. These ancient caves are a testimony to India’s rich cultural and architectural heritage. The grandeur of these temples also reflects the artistic and religious advancements during the Chalukyan era, making it a must-visit for history enthusiasts and art lovers alike." 
+            },
+            { 
+                name: "⛩ Pattadakal Temples", 
+                image: "bk2.png", 
+                description: "Discover the Pattadakal Temples, a UNESCO World Heritage site known for its blend of Dravidian and Nagara architectural styles. This temple complex, nestled on the banks of the Malaprabha River, was a ceremonial site for Chalukyan kings. The intricate carvings narrate stories from Indian mythology and epics, showcasing unparalleled craftsmanship. The temples stand as an epitome of cultural confluence and religious harmony. A visit to Pattadakal provides a deep dive into the spiritual and artistic legacy of ancient India, offering an enriching experience to all who explore its grandeur." 
+            },
+            { 
+                name: "🛕 Aihole", 
+                image: "bk3.png", 
+                description: "Aihole, often referred to as the 'Cradle of Indian Temple Architecture,' is a treasure trove of ancient temples and monuments. With over 125 stone temples, this site served as an experimental ground for Chalukyan architects. Each temple reflects a unique style, showcasing the evolution of temple architecture in India. Among the must-see structures are the Durga Temple and the Lad Khan Temple, which highlight the creativity and technical expertise of ancient builders. Walking through Aihole feels like stepping back in time, offering a rare chance to witness the birthplace of India's architectural legacy." 
+            },
+            { 
+                name: "💧 Almatti Dam", 
+                image: "vdam.jpeg", 
+                description: "The Almatti Dam, built across the Krishna River, is not just an engineering marvel but also a picturesque destination. Surrounded by lush greenery and tranquil waters, the dam offers a perfect retreat for nature lovers and photographers. The nearby landscaped gardens and musical fountain add to its charm, making it a great spot for families and picnic enthusiasts. It also serves as a vital source of irrigation and power generation for the region, reflecting the harmonious blend of nature and utility. Visitors can enjoy boat rides and serene sunset views, making it a memorable experience." 
+            },
+            { 
+                name: "🗿 Kudalasangama", 
+                image: "bk4.png", 
+                description: "Kudalasangama, located at the confluence of the Krishna and Malaprabha rivers, is a sacred site for devotees of Basavanna, the 12th-century philosopher and saint. The site features a beautiful temple dedicated to Lord Sangameshwara and a memorial to Basavanna. The tranquil atmosphere and spiritual significance of Kudalasangama make it a place of solace and reflection. Pilgrims and visitors are drawn to its serene environment and the rich legacy of Lingayat philosophy. The blend of spirituality, nature, and history creates a unique and fulfilling experience for all." 
+            }
+        ],
+        [
+            { 
+                name: "🍛 Jolad Roti Oota", 
+                image: "vroti.jpeg", 
+                description: "Enjoy the traditional North Karnataka meal, Jolad Roti Oota, featuring sorghum roti, spicy curries, and tangy chutneys. It reflects the region's culinary simplicity and bold flavors." 
+            },
+            { 
+                name: "🍚 Karadantu", 
+                image: "bk5.png", 
+                description: "Savor Karadantu, a nutritious sweet made from jaggery, nuts, and dry fruits. This healthy treat is a specialty of Bagalkot and a perfect energy booster." 
+            }
+        ],
+        [
+            { 
+                name: "🌄 Krishna River Views", 
+                image: "bk6.png", 
+                description: "Relax by the tranquil Krishna River and enjoy serene views and peaceful ambiance. The river plays a significant role in the region's history and daily life." 
+            },
+            { 
+                name: "🌿 Banashankari Temple", 
+                image: "bk7.png", 
+                description: "Visit the Banashankari Temple, a revered shrine dedicated to Goddess Banashankari. The temple's serene environment and historical significance attract pilgrims and tourists alike." 
+            }
+        ]
+    );
+}
+else if (destinationName === "Shivamogga") {
+    setDestinationData(
+        "Shivamogga",
+        "images/smg-1.jpg",
+        "Shivamogga, also known as the Gateway to the Western Ghats, is a vibrant city in Karnataka, rich in natural beauty, history, and culture. Nestled between lush forests, tranquil rivers, and mesmerizing waterfalls, Shivamogga is a paradise for nature lovers and adventure seekers alike. Known for its pleasant climate and breathtaking landscapes, the city is home to many ancient temples, palaces, and wildlife sanctuaries that reflect the region's deep-rooted history and spiritual significance. Whether you're a history buff, an adventurer, or someone looking for a peaceful retreat, Shivamogga offers an unforgettable experience.",
+        "images/smg-over.png",
+        [
+            { 
+                name: "🐘 Sakrebylu Elephant Sanctuary", 
+                image: "smg-2.jpeg", 
+                description: "A visit to Sakrebylu Elephant Sanctuary is a memorable experience for animal lovers. The sanctuary offers the rare opportunity to observe and interact with elephants in their natural habitat. Guided tours educate visitors about the importance of elephant conservation and their vital role in maintaining the ecosystem. You can also watch elephants bathe and feed, offering a unique experience." 
+            },
+            { 
+                name: "🐅 Tyavarekoppa Lion and Tiger Safari", 
+                image: "smg-3.jpg", 
+                description: "Tyavarekoppa Safari is an exciting way to explore the local wildlife in a secure environment. The safari ride takes you through a vast stretch of forest where you can spot lions, tigers, leopards, and several other wildlife species. It's an excellent opportunity to see these magnificent creatures up close, in their natural surroundings." 
+            },
+            { 
+                name: "🏰 Shivappa Nayaka Palace", 
+                image: "smg-4.JPG", 
+                description: "Step back in time as you explore the grandeur of Shivappa Nayaka Palace, an architectural gem showcasing the glorious era of the Nayaka dynasty. The museum inside the palace is a treasure trove of historical artifacts and royal relics, offering a deeper understanding of the region's past. The palace's exquisite design and serene ambiance make it a must-visit destination in Shivamogga." 
+            }
+        ],
+        [
+            { 
+                name: "🍛 Holige", 
+                image: "smg-5.png", 
+                description: "Holige, or Obbattu, is a sweet and savory traditional flatbread stuffed with a mixture of jaggery, coconut, and spices. Often prepared during festivals and special occasions, it is a delightful treat for those with a sweet tooth. Holige pairs well with yogurt or a spicy curry." 
+            },
+            { 
+                name: "🍚 Idli Sambar", 
+                image: "smg-6.png", 
+                description: "A quintessential South Indian breakfast, Idli Sambar is a dish made of steamed rice cakes served with a tangy lentil-based soup and spicy chutneys. It is both nutritious and satisfying, making it a favorite of locals and tourists alike." 
+            },
+            { 
+                name: "🍚 Pongal", 
+                image: "smg-7.png", 
+                description: "A comforting dish made from rice and lentils, typically served for breakfast. It is seasoned with black pepper, cumin, ginger, and ghee, giving it a warm, aromatic flavor. It’s often served with coconut chutney and sambar, making it a perfect start to the day." 
+            }
+        ]
+    );
+}else if (destinationName === "Mangalore") {
+    setDestinationData(
+        "Mangalore 🏖",
+        "images/mgmain.png", // Placeholder image for Mangalore
+        "Mangalore, also known as Mangaluru, is a vibrant coastal city located in the southwestern part of India. Known for its serene beaches, lush greenery, and rich history, Mangalore serves as a major port city in Karnataka. The city has a blend of modern development and traditional culture. The historical significance of Mangalore is reflected in its ancient temples, churches, and colonial-era architecture. It is also famous for its thriving seafood industry and authentic South Indian cuisine, making it a popular destination for food lovers and tourists alike. Mangalore is also known for its educational institutions, making it a hub of learning in the region.",
+        "images/mangalore-overview.jpg",
+        [
+            { name: "🌟 Tannirbhavi Beach", image: "mg1.png", description: "Tannirbhavi Beach is a quiet and less crowded beach located on the outskirts of Mangalore. Known for its scenic views and golden sands, it's perfect for a peaceful getaway. The beach offers a picturesque backdrop with lush palm trees and serene waters. Visitors can enjoy relaxing walks along the shore or take part in activities like kayaking and fishing. Tannirbhavi is also home to the famous Tannirbhavi Beach Resort, offering a blend of luxury and natural beauty." },
+            { name: "🕌 Kadri Manjunath Temple", image: "mg2.png", description: "Kadri Manjunath Temple is one of the most revered Hindu temples in Mangalore, dedicated to Lord Shiva. The temple, which dates back to the 11th century, showcases the architectural grandeur of the Kadamba dynasty. The temple is surrounded by serene landscapes, offering a tranquil environment for devotees and tourists alike. Visitors can explore the temple's intricate carvings and sculptures, depicting various deities and mythological stories. The temple is also known for its sacred water tank, which is considered to have holy significance." },
+            { name: "🌿 Panambur Beach", image: "mg3.png", description: "Panambur Beach is one of the most popular and well-maintained beaches in Mangalore. It is known for its clean sands, clear waters, and the vibrant activities that take place here. The beach offers various recreational activities like boat rides, camel rides, and water sports. It is also famous for the annual beach festival, which draws large crowds. Panambur Beach is ideal for a fun-filled family day, with ample opportunities for relaxation and entertainment. The beach is easily accessible and offers various eateries serving fresh seafood and local snacks." },
+            { name: "🌳 Pilikula Nisargadhama", image: "mg4.png", description: "Pilikula Nisargadhama is a scenic park located on the outskirts of Mangalore. It is a unique blend of nature and adventure, with attractions like a zoo, botanical garden, lake, and an interactive science center. The park is perfect for a day outing with family and friends, offering a variety of activities for all age groups. Visitors can enjoy a peaceful walk through the lush greenery, spot exotic animals in the zoo, or take a boat ride on the lake. Pilikula is a must-visit for nature lovers and families." }
+        ],
+        [
+            { name: "🍲 Mangalore Buns", image: "mg5.png", description: "Mangalore Buns are a popular snack in the region, made with ripe bananas and a unique blend of spices. These deep-fried, fluffy buns are crispy on the outside and soft on the inside. They are usually served with coconut chutney or sambar. The recipe is simple yet delicious, and the buns are often enjoyed for breakfast or as an evening snack. Mangalore Buns are a must-try for anyone visiting the city, providing a taste of local culinary tradition." },
+            { name: "🍛 Neer Dosa", image: "mg6.png", description: "Neer Dosa is a light and fluffy rice pancake, native to Mangalore and the coastal Karnataka region. The dosa is made from ground rice and water, creating a thin, soft texture. Neer Dosa is typically served with a variety of side dishes like coconut chutney, sambar, or curry. It is an integral part of Mangalorean cuisine and is often enjoyed for breakfast or lunch. The simplicity and taste of Neer Dosa make it a favorite among locals and tourists alike." },
+            { name: "🍜 Fish Curry Rice", image: "mg7.png", description: "Fish Curry Rice is a signature Mangalorean dish made with fresh, local fish and a spicy coconut-based curry. The curry is rich in flavors, with a perfect blend of spices and tamarind, giving it a tangy and aromatic taste. It is usually served with steamed rice, making for a hearty and fulfilling meal. Fish Curry Rice is a staple in Mangalore and is loved by seafood enthusiasts. The dish reflects the coastal region's reliance on seafood and traditional cooking methods." }
+        ],
+        [
+            { name: "🌟 St. Aloysius Chapel", image: "mg8.png", description: "St. Aloysius Chapel is a beautiful church located in the heart of Mangalore. Known for its stunning frescoes and paintings, the chapel is a fine example of colonial-era architecture. The interior of the chapel is adorned with intricate murals, depicting biblical scenes and Christian saints. The church also has a serene ambiance, making it a peaceful place for prayer and reflection. St. Aloysius Chapel is one of the architectural jewels of Mangalore and an important religious site in the city." },
+            { name: "🏞 Ullal Beach", image: "mg9.png", description: "Ullal Beach is a quiet and picturesque beach located about 12 km south of Mangalore. The beach is known for its calm waters, golden sand, and beautiful sunsets. It is less crowded than the other beaches in Mangalore, making it an ideal spot for those seeking solitude and natural beauty. The beach is also famous for its fishing activities and offers a great opportunity to interact with the local community. Ullal Beach is perfect for a relaxed day out, away from the hustle and bustle of the city." },
+            { name: "🌳 Kadri Park", image: "mg10.png", description: "Kadri Park is a serene and beautifully landscaped park located in Mangalore. The park is a perfect spot for families and nature lovers to relax and enjoy a peaceful environment. It features lush green lawns, walking paths, and a variety of plants and trees. Kadri Park is also home to a few small lakes and ponds, adding to its tranquil charm. Visitors can also enjoy a boat ride in the lake, making it a perfect outing for nature and wildlife enthusiasts." }
+        ]
+    );
+}else if (destinationName === "Vijayanagara") {
+    setDestinationData(
+        "Vijayanagar ",
+        "images/innervg.png", // Placeholder image for Vijayanagar
+        "Vijayanagar, now known as Hampi, was the capital of the Vijayanagar Empire in the 14th to 16th centuries. A UNESCO World Heritage Site, it is renowned for its grand ruins, temples, and vibrant history. Located in the state of Karnataka, Hampi was a thriving metropolis and one of the most powerful cities in India during its peak. The city boasts magnificent architectural structures, including large temples, palaces, and monuments that showcase the glory of the Vijayanagar Empire. Hampi is also surrounded by stunning natural landscapes, including boulders and the Tungabhadra River, making it a popular destination for history lovers and nature enthusiasts.",
+        "images/vijayanagar-overview.jpg",
+        [
+            { name: "🌟 Virupaksha Temple", image: "vg1.png", description: "Virupaksha Temple, dedicated to Lord Shiva, is one of the oldest temples in Hampi. The temple complex is known for its impressive architecture, with tall gopurams (entrance towers), intricate carvings, and vibrant paintings depicting Hindu deities. The temple has been a place of worship for centuries and continues to draw pilgrims from across India. Located near the banks of the Tungabhadra River, it offers a peaceful and spiritual atmosphere." },
+            { name: "🌿 Hampi Bazaar", image: "vg2.png", description: "Hampi Bazaar is an ancient marketplace located in front of the Virupaksha Temple. It is a bustling area surrounded by ruins of grand arches and pillared structures. The bazaar was once a thriving commercial hub, selling spices, textiles, and precious stones. Today, it is a popular spot for tourists to shop for souvenirs, traditional crafts, and local artifacts. The area is also known for its vibrant atmosphere, with vendors offering local snacks and goods." },
+            { name: "🌳 Matanga Hill", image: "vg3.png", description: "Matanga Hill offers a breathtaking panoramic view of the entire Hampi landscape. It is a popular spot for sunrise and sunset views, providing a tranquil escape amidst the rocky terrain. The hill is also associated with various legends from Hindu mythology and has a small temple dedicated to Lord Shiva at its summit. Matanga Hill is a perfect destination for hiking, nature walks, and photography." },
+            { name: "🛶 Kuruvatti", image: "vg4.png", description: "Kuruvatti is a scenic village located near Hampi and is known for its tranquil environment and lush greenery. It is home to the Kuruvatti Temple, a lesser-known but historically significant site. The area around Kuruvatti is perfect for nature walks, exploration, and peaceful retreats. It offers an authentic rural experience and an opportunity to immerse yourself in the simplicity and beauty of village life, away from the tourist crowds." }
+        ],
+        [
+            { name: "🍲 Mavinakayi Chitranna", image: "vg5.png", description: "Mavinakayi Chitranna, also known as Mango Rice, is a refreshing, tangy dish made with freshly grated mangoes, rice, and a special blend of spices. This vibrant dish is especially popular during the mango season and is a perfect combination of sweet, sour, and spicy flavors. It is often garnished with roasted peanuts, curry leaves, and mustard seeds for an added crunch and aroma. A must-try for food lovers exploring the flavors of Karnataka!" },
+            { name: "🍛 Holige", image: "vg6.png", description: "Holige, also known as Obbattu, is a traditional sweet flatbread from Karnataka. It is made with a filling of jaggery, coconut, and lentils, wrapped in a soft dough. Holige is often served as a festive or celebratory dish, especially during festivals like Ugadi or Diwali. The deliciously sweet filling inside the crispy outer layer makes it a popular treat for tourists and locals alike." },
+            { name: "🍞 Jolad Roti", image: "vroti.jpeg", description: "Jolad Roti, made from jowar (sorghum) flour, is a staple food of North Karnataka. The flatbread is gluten-free and is typically served with chutneys, curries, or lentils. Jolad Roti is known for its hearty and wholesome texture, making it a popular dish in rural areas. It pairs wonderfully with spicy vegetable curries or a side of ghee, offering a fulfilling and traditional meal that represents the essence of Karnataka's cuisine." }
+       
+        ]
+    );
+}else if (destinationName === "Udupi") {
+    setDestinationData(
+        "Udupi",
+        "images/u-1.png", // Placeholder image for Udupi
+        "Udupi, located on the southwestern coast of India in Karnataka, is a vibrant coastal town renowned for its rich cultural heritage, delicious cuisine, and scenic landscapes. Famous for its temples, Udupi is a significant pilgrimage destination, especially the Sri Krishna Temple. The town is also known for its pristine beaches, such as Malpe and Kaup, which attract visitors looking for relaxation and natural beauty. Udupi's culinary legacy is world-famous, with its unique blend of vegetarian dishes and coastal flavors. The town is also a hub for learning, with several educational institutions and a thriving local economy. Udupi combines spiritual charm with coastal tranquility, making it a must-visit destination for both history buffs and nature enthusiasts.",
+        "images/u-2.png",
+        [
+            { name: "🌟 Sri Krishna Temple", image: "u-3.png", description: "The Sri Krishna Temple in Udupi is one of the most famous pilgrimage sites in India. Dedicated to Lord Krishna, it is known for its beautiful architecture, the famed 'Kanakana Kindi' (window through which devotees get a glimpse of the deity), and the unique tradition of offering food to the deity as part of the temple’s rituals. The temple draws thousands of visitors annually, not only for its spiritual significance but also for its mesmerizing rituals and cultural importance." },
+            { name: "🏖 Malpe Beach", image: "u-4.png", description: "Malpe Beach, located just a few kilometers from Udupi, is a serene and beautiful coastal destination known for its golden sands and clear waters. The beach is ideal for relaxation, water sports, and enjoying stunning sunsets. It is also the departure point for visiting St. Mary's Island, a small island famous for its unique basaltic rock formations and pristine beauty. Malpe is perfect for a leisurely day by the sea, with options for boating and swimming." },
+            { name: "🌿 Karkala Gomateshwara", image: "u-5.jpg", description: "Karkala Gomateshwara, also known as the giant statue of Lord Bahubali, is a prominent Jain pilgrimage site located about 50 kilometers from Udupi. The statue stands at a height of 42 feet and is carved out of granite, making it one of the tallest monolithic statues in India. The site offers a peaceful atmosphere surrounded by lush greenery, making it a great destination for spiritual reflection and photography. Visitors can also explore the surrounding temples and heritage sites that add to the historical significance of Karkala." },
+            { name: "🏰 Udupi Anantheshwara Temple", image: "u-6.png", description: "The Udupi Anantheshwara Temple is an ancient temple dedicated to Lord Shiva. Known for its historical significance, the temple has intricate carvings and stone architecture that reflect the rich cultural heritage of Udupi. It is a popular destination for history enthusiasts and spiritual seekers alike, offering a peaceful retreat in the heart of the town." },
+            
+        ],
+        [
+            { name: "🍛 Udupi Sambar", image: "u-7.png", description: "Udupi Sambar is a flavorful, spicy, and tangy lentil-based stew, a staple in the region’s cuisine. Unlike regular sambar, Udupi Sambar is made with a unique blend of spices and vegetables, creating a distinct taste. Often served with dosa, idli, or rice, this dish is a must-try for food lovers who visit Udupi to explore the city’s renowned culinary offerings." },
+            { name: "🍽 Masala Dosa", image: "u-8.png", description: "Masala Dosa is a quintessential South Indian dish and one of Udupi’s most famous culinary exports. It is a crispy, thin crepe made from fermented rice and lentil batter, filled with a spiced mashed potato filling. Served with chutneys and sambar, masala dosa is a favorite breakfast or snack item for both locals and tourists alike." },
+            { name: "🍲 Udupi Bisi Bele Bath", image: "u-13.png", description: "Bisi Bele Bath is a traditional Karnataka dish that combines rice, lentils, vegetables, and a special spice mix. The dish is cooked together, giving it a hearty and flavorful taste. Udupi Bisi Bele Bath is typically served hot and is enjoyed with a side of curd or chutney. It is a comforting dish that’s perfect for the cooler months or as a filling meal any time of day." }
+        ]
+    );
+}else if (destinationName === "Hubli-Dharwad") {
+    setDestinationData(
+        "Hubli-Dharwad ",
+        "images/innerhd.png", // Placeholder image for Hubli-Dharwad
+        "Hubli and Dharwad are twin cities located in the northern part of Karnataka. Hubli is known for its commercial significance, while Dharwad is famous for its cultural heritage and educational institutions. The region is rich in history, culture, and offers a unique blend of old and new. Known for its pleasant climate and lush green surroundings, Hubli-Dharwad serves as a gateway to the Western Ghats and has several historical monuments, temples, and scenic spots that attract tourists from across the country.",
+        "images/hubli-dharwad-overview.jpg",
+        [
+            { name: "🌟 Chidambar Temple", image: "hd1.png", description: "The Chidambar Temple, located in Hubli, is an ancient Hindu temple dedicated to Lord Shiva. The temple is known for its intricate carvings and serene ambiance. The architecture of the temple reflects the grandeur of the Vijayanagara Empire, with ornate pillars, sculptures, and a peaceful environment for devotees and tourists alike. The temple is a significant religious site for locals and an important heritage site for visitors." },
+            { name: "🏰 Unkal Lake", image: "hd2.png", description: "Unkal Lake is a beautiful man-made lake in Hubli, known for its scenic views and recreational activities. The lake is a popular spot for boating, picnics, and evening walks. The surrounding gardens and the view of the sunset make it an ideal place for relaxation. There is also a statue of Swaminarayan on an island in the middle of the lake, which adds to the beauty of the place." },
+            { name: "🌿 Siddharoodha Math", image: "hd3.png", description: "Siddharoodha Math is a prominent spiritual center in Hubli, dedicated to the revered saint Siddharoodha Swamiji. The math is known for its peaceful atmosphere, beautiful surroundings, and the presence of the samadhi of the saint. It is a center for spiritual learning and offers a place for meditation and contemplation. The temple and math are an integral part of the spiritual landscape of Hubli." },
+            { name: "🌳 Nrupatunga Hill", image: "hd4.png", description: "Nrupatunga Hill offers a panoramic view of Hubli city. It is named after the 10th-century ruler, King Nrupatunga. The hilltop is a peaceful spot, ideal for watching sunsets and enjoying the natural beauty of the region. The hill is a popular destination for locals who enjoy walking, hiking, and photography, offering stunning views of the city and surrounding landscape." },
+            { name: "🌺 Botanic Garden", image: "hd11.png", description: "The Botanic Garden in Hubli is a lush green park that offers a calm and refreshing escape from the city's hustle and bustle. The garden is home to a variety of plant species and is perfect for nature lovers and those seeking a quiet place to relax. It also serves as an educational hub for students and nature enthusiasts interested in learning more about different plant species and their ecological significance." }
+        ],
+        [
+            { name: "🍲 Bhel Puri", image: "hd5.png", description: "Bhel Puri is a popular street snack in Hubli-Dharwad, made from puffed rice, sev, vegetables, and tangy chutneys. It's a delightful mix of sweet, spicy, and crunchy flavors. The dish is typically served in paper cones and is a common sight at street food stalls, especially in busy markets. It's a favorite snack among locals and tourists looking for a quick bite during their sightseeing adventures." },
+            { name: "🍛 Jolad Roti", image: "vroti.jpeg", description: "Jolad Roti, made from jowar (sorghum) flour, is a staple food of North Karnataka. The flatbread is gluten-free and is typically served with chutneys, curries, or lentils. Jolad Roti is known for its hearty and wholesome texture, making it a popular dish in rural areas. It pairs wonderfully with spicy vegetable curries or a side of ghee, offering a fulfilling and traditional meal that represents the essence of Karnataka's cuisine." },
+            { name: "🍜 Dharwad Pedha", image: "hd6.png", description: "Dharwad Pedha is a famous sweet dish originating from the town of Dharwad. Made from milk, sugar, and ghee, the sweet is cooked to perfection to achieve a rich, caramelized flavor. It is known for its smooth texture and delightful taste. Dharwad Pedha is a popular dessert during festivals and special occasions and is a must-try for anyone visiting Hubli-Dharwad." },
+            { name: "🌶 Mirchi Bajji", image: "hd7.png", description: "Mirchi Bajji is a crispy and spicy snack made from large green chilies dipped in gram flour batter and deep-fried. This street food favorite is served hot with a tangy chutney or sauce, making it a perfect treat for spice lovers. Found commonly at roadside stalls and markets, it is a popular snack during the monsoon season in Hubli-Dharwad." }
+        ]
+    );
+}else if (destinationName === "Chitradurga") {
+    setDestinationData(
+        "Chitradurga",
+        "images/ch-1.png", // Placeholder image for Chitradurga
+        "Chitradurga, located in the heart of Karnataka, is a city steeped in history and natural beauty. Known for its magnificent fort and serene landscapes, it offers visitors a glimpse into the rich cultural heritage of the region. Chitradurga Fort, with its legendary tales and architectural brilliance, stands as a testament to the region's historical significance. The area is also known for its traditional cuisine, scenic spots, and vibrant local culture, making it a perfect destination for history lovers, adventure enthusiasts, and foodies alike.",
+        "images/ch-2.png",
+        [
+            { 
+                name: "🌟 Chitradurga Fort", 
+                image: "ch-3.JPG", 
+                description: "Chitradurga Fort, also known as the 'Fort of Seven Circles,' is an architectural marvel built on rocky hills. The fort's design includes winding pathways, massive gateways, and secret tunnels, showcasing advanced military engineering. It once served as a powerful defense system against invaders. The fort complex also features ancient temples, water reservoirs, and granaries. Rich in history and legends, it is famously associated with the bravery of Onake Obavva, a local heroine who defended the fort single-handedly. Today, it remains a popular tourist destination for its historical significance and panoramic views of the surrounding landscape." 
+            },
+            { 
+                name: "🌳 Jogimatti", 
+                image: "ch-4.jpg", 
+                description: "Jogimatti is a picturesque hill station located near Chitradurga, known for its serene environment and natural beauty. Situated at an altitude of over 3800 feet, it is one of the coolest places in the region. The hill station is surrounded by lush greenery and offers stunning views of the valleys below. It is also home to a wildlife sanctuary, making it a haven for nature lovers and bird watchers. The tranquil atmosphere and pleasant climate make Jogimatti an ideal spot for picnics, trekking, and relaxation amidst nature." 
+            },
+            { name: "⛪ Chandravalli Caves",
+             image: "ch-5.png",
+             description: "Chandravalli Caves, an ancient archaeological site, are nestled amidst tranquil surroundings and lush greenery. These caves are known for their fascinating underground chambers, which were once meditation sites for monks. Artifacts discovered here date back to the Iron Age, shedding light on the region's rich history. The caves have intricate carvings and inscriptions that tell stories of the past, making them a delight for history enthusiasts. The serene Chandravalli Lake nearby adds to the beauty of this destination, creating a perfect blend of history and nature. Exploring the dimly lit passages and chambers of the caves is an adventure in itself. It's also a significant site for those interested in ancient Indian art and culture. The tranquil ambiance and historical intrigue make Chandravalli Caves a must-visit destination for tourists." }
+        ],
+        [
+            { 
+                name: "🍛 Ragi Mudde", 
+                image: "ch-6.png", 
+                description: "Ragi Mudde, or finger millet balls, is a staple food in Chitradurga and the surrounding regions of Karnataka. These nutritious balls are made from ragi flour and water, steamed to perfection. Typically served with spicy sambar, saaru, or a side of chutney, Ragi Mudde is cherished for its simplicity and health benefits. High in fiber and essential nutrients, it is a favorite among locals and visitors alike, offering a taste of authentic Karnataka cuisine." 
+            },
+            { 
+                name: "🍲 Chitranna", 
+                image: "ch-7.png", 
+                description: "Chitranna, or lemon rice, is a vibrant and tangy dish popular in Chitradurga. Made with cooked rice, lemon juice, and a tempering of spices, curry leaves, and green chilies, it is both flavorful and refreshing. The dish is often garnished with roasted peanuts, adding a delightful crunch. Perfect as a light meal or snack, Chitranna is a must-try for those exploring the culinary delights of Karnataka." 
+            },
+            { 
+                name: "🍪 Shenga Holige", 
+                image: "kshenga.png", 
+                description: "Shenga Holige, or peanut-stuffed sweet flatbread, is a delicious treat from Chitradurga. Made with a filling of powdered peanuts, jaggery, and cardamom, encased in a soft dough, it is a perfect balance of nutty and sweet flavors. This traditional dessert is often prepared during festivals and special occasions, offering a taste of local tradition and hospitality." 
+            }
+        ]
+    );
+}else if (destinationName === "Dakshina Kannada") {
+    setDestinationData(
+        "Dakshina Kannada",
+        "images/dkinn.png", // Placeholder image for Dakshina Kannada
+        "Dakshina Kannada is a coastal district in Karnataka, known for its scenic beauty, historical landmarks, and rich cultural heritage. The district is home to some of the most beautiful beaches, temples, and verdant hills, making it a popular destination for both spiritual and adventure seekers. With its vibrant local culture, delicious coastal cuisine, and a mix of modern and ancient attractions, Dakshina Kannada offers a unique blend of experiences for every traveler. The district is also known for its bustling markets, warm hospitality, and beautiful architecture.",
+        "images/dk2.jpg",
+        [ {
+                name: "🌿 Dharmasthala",
+                image: "dk3.png",
+                description: "Dharmasthala, a small town located near Ujire in Dakshina Kannada, is a major pilgrimage site dedicated to Lord Manjunatha, a form of Lord Shiva. The temple here is known for its grand architecture and is a place of immense spiritual significance. Dharmasthala is also renowned for its social welfare initiatives, including free food services for pilgrims. The serene surroundings, ancient temples, and rich religious history make it a must-visit destination for those seeking peace and spirituality. Visitors to Dharmasthala can also explore the sacred idols, intricate carvings, and the history of the temple's establishment. The town is a melting pot of cultures, where followers of different faiths come together to contribute to the temple's charitable activities. The famous car festival held here annually is a visual spectacle and draws large crowds. Visitors often stay in the free guesthouses provided by the temple, experiencing the spirit of hospitality and devotion."
+            },
+            {
+                name: "🏖️ Panambur Beach",
+                image: "dk4.png",
+                description: "Panambur Beach, located near Mangalore, is one of the most popular beaches in Dakshina Kannada. Known for its golden sands and clear blue waters, it offers a serene environment for visitors to relax and unwind. The beach is also famous for water sports activities like parasailing, jet-skiing, and boat rides, making it a perfect destination for adventure enthusiasts. Visitors can also enjoy a peaceful sunset by the sea, making it an ideal spot for families and couples alike. The beach is clean, well-maintained, and offers amenities like picnic areas and beachside eateries. The local fishermen’s boats add to the picturesque beauty of the beach, and visitors can watch them return with their catch. The beach is also known for its evening festivals and events that showcase the region's rich culture. For those seeking a peaceful and vibrant coastal experience, Panambur Beach is an unmissable stop."
+            },
+            {
+                name: "🌳 Subrahmanya Temple",
+                image: "dk5.png",
+                description: "Subrahmanya Temple, located in the town of Subrahmanya, is a highly revered temple dedicated to Lord Subrahmanya, the son of Lord Shiva. It is one of the most important pilgrimage sites in Dakshina Kannada, attracting thousands of devotees, especially during the festival of Subrahmanya Shashti. The temple is known for its unique rituals, stunning architecture, and the sacred river, Kumaradhara, flowing nearby. The temple is an integral part of the local culture and history, with centuries-old traditions still being followed by the devotees. The serene ambiance and peaceful surroundings create a divine atmosphere, ideal for spiritual seekers. The temple attracts pilgrims seeking blessings for health, prosperity, and overcoming life's obstacles. The temple is also famous for its sacred 'Kavacha' or protective armor, which is believed to bring fortune and protection. The lush greenery and beautiful landscapes around the temple make it a picturesque and calming destination."
+            },
+        ],
+        [
+        {
+                name: "🌳 Golibaje",
+                image: "dk6.png",
+                description: "Golibaje, a picturesque coastal village in Dakshina Kannada, is known for its serene beauty and vibrant local culture. It is famous for its traditional Malnad-style dishes, especially the popular 'Golibaje,' a delicious fried snack made from a mixture of rice flour, coconut, and spices. The village is a favorite among food enthusiasts who wish to try authentic coastal Karnataka cuisine. The natural beauty of Golibaje, with its lush greenery and tranquil atmosphere, makes it a perfect getaway for nature lovers and those seeking a peaceful escape. The nearby beaches are less crowded and provide an excellent place for visitors to relax, swim, and enjoy the quiet seaside ambiance. For tourists, the peaceful surroundings and traditional flavors make Golibaje a hidden gem worth exploring."
+            },
+            {
+                name: "🍚 Neer Dosa",
+                image: "dk7.png", 
+                description: "Neer Dosa, a traditional coastal dish, is a light and soft rice pancake made from rice flour and water, resulting in a delicate, thin, and almost transparent texture. Unlike other dosas, Neer Dosa is not fermented, making it a quick and easy dish to prepare. It is often paired with spicy fish curry or chutney, making it a beloved dish in Dakshina Kannada. The simplicity and lightness of Neer Dosa, combined with its ability to complement rich and flavorful curries, make it a staple in local homes. The dish is gluten-free, offering a healthy option that can be enjoyed by people of all ages. Served as breakfast or dinner, Neer Dosa is a favorite among locals and visitors. The smooth texture and subtle flavor make it a perfect canvas for absorbing the flavors of accompanying dishes. It's often prepared during festivals and family gatherings, showcasing the region's love for simple yet flavorful food."
+            },
+            {
+                name: "🐟 Fish Curry",
+                image: "dk8.png", 
+                description: "Fish Curry, a signature dish of Dakshina Kannada, is a flavorful, aromatic curry made with fresh, local fish like Mackerel or Pomfret. The curry is cooked in a tangy base of tamarind, coconut, and a blend of local spices, resulting in a rich, spicy, and mildly sour flavor profile. The use of coconut and traditional spices like coriander, cumin, and mustard seeds adds depth to the dish, making it a true representation of the coastal cuisine of Karnataka. Fish Curry is often served with rice, Neer Dosa, or Chapati, allowing the flavors to be fully appreciated. It is a favorite dish among both locals and tourists visiting the region. The curry varies from region to region, with each family having its unique twist on the recipe. Known for its health benefits due to the abundance of omega-3 fatty acids from the fish, Fish Curry is enjoyed by people of all ages. The dish is often prepared during special occasions, festivals, and family gatherings, showcasing the region's rich culinary heritage."
+            }
+        ]
+    );
+        }else if (destinationName === "Uttara Kannada") {
+    setDestinationData(
+        "Uttara Kannada District ",
+        "images/k1.png", // Placeholder image for Uttara Kannada
+        "Uttara Kannada is a picturesque district in Karnataka, known for its pristine beaches, dense forests, ancient temples, and majestic waterfalls. This district lies along the Arabian Sea coast and offers a blend of natural beauty and cultural heritage. It's a paradise for nature lovers and adventure enthusiasts, with options for trekking, bird watching, river rafting, and more. Whether you seek serenity or thrill, Uttara Kannada is a perfect destination.",
+        "images/kover.png",
+        [
+            { name: "🏝 Gokarna Beaches", image: "k2.png", description: "Gokarna is a renowned coastal town in Uttara Kannada, famous for its serene beaches such as Om Beach, Kudle Beach, and Half Moon Beach. Besides the beaches, the town is home to the sacred Mahabaleshwar Temple, a key pilgrimage site for Hindus. The calm waves, golden sands, and tranquil atmosphere make these beaches ideal for yoga retreats, water sports, or just unwinding in nature's lap." },
+           
+            { name: "🌿 Yana Rocks", image: "k4.png", description: "Nestled amidst lush green forests, Yana is famous for its dramatic limestone rock formations, Bhairaveshwara Shikhara and Mohini Shikhara. These monoliths stand out against the dense greenery, offering a surreal backdrop for trekkers and photographers. Legends say these rocks are associated with Hindu mythology, adding a mystical charm to the location. A short trek through the woods leads to this geological marvel." },
+            { name: "🌺 Murudeshwar", image: "k5.png", description: "Murudeshwar, a coastal town, is home to the world's second-tallest statue of Lord Shiva, standing majestically at 123 feet. The Murudeshwar Temple, perched on a hillock, offers stunning views of the Arabian Sea. This spiritual destination is also a hotspot for water sports like scuba diving and snorkeling, with clear waters teeming with marine life." },
+            { name: "🏞 Magod Falls", image: "k6.png", description: "Magod Falls is a mesmerizing waterfall formed by the Bedti River, cascading down a height of 200 meters in two tiers. The falls are surrounded by dense forests, making it an idyllic location for nature lovers. A viewpoint nearby offers an unobstructed view of the waterfall, especially beautiful during the rainy season when the water flow is at its peak." }
+        ],
+        [
+            { name: "🥞 Neer Dosa", image: "mg6.png", description: "Neer Dosa, meaning 'water dosa,' is a thin, soft rice pancake that is a staple in coastal Karnataka. Made with a simple batter of rice and water, these dosas are light and pair perfectly with coconut chutney, fish curry, or spicy chicken curry. It is a must-try for anyone visiting the region." },
+            { name: "🍗 Kori Roti", image: "k7.png", description: "Kori Roti is a traditional dish combining crispy rice wafers and spicy chicken curry. The dish is a perfect balance of textures, with the crunch of the roti and the rich, aromatic curry. A culinary highlight of the region, it is a favorite among locals and tourists alike." },
+            { name: "🍨 Shrikhand", image: "k8.png", description: "Shrikhand is a creamy, sweet dessert made from hung yogurt. Flavored with saffron, cardamom, and garnished with nuts, this delicacy is a perfect way to end a traditional meal in Uttara Kannada. Served chilled, it is especially popular during festivals and special occasions." },
+            { name: "🌮 Ambode", image: "k13.png", description: "Ambode, also known as masala vada, is a crispy and savory lentil fritter seasoned with spices, curry leaves, and green chilies. Served hot with coconut chutney, it is a beloved tea-time snack in Karnataka and a must-try street food item." }
+        ]
+    );
+}
+else if (destinationName === "Kalaburagi") {
+    setDestinationData(
+        "Kalaburagi (Gulbarga) ",
+        "images/g13.png", // Placeholder image for Kalaburagi
+        "Kalaburagi, historically known as Gulbarga, is a city with a rich cultural and historical legacy. Situated in the northern part of Karnataka, it was once a prominent part of the Bahmani Sultanate. The city is renowned for its unique fusion of Islamic architecture and local heritage. Kalaburagi offers a wonderful blend of ancient forts, temples, and serene spiritual retreats, making it a destination for both history lovers and spiritual seekers. The city’s landscape, dotted with lush fields and historical monuments, reflects its cultural and religious diversity.",
+        "images/g14.png",
+        [
+            { name: "🌟 Gulbarga Fort", image: "g1.png", description: "Gulbarga Fort is an iconic structure built during the Bahmani Sultanate. Known for its massive walls and historical significance, the fort includes a stunning Jama Masjid with Moorish-style arches and expansive courtyards. The fort served as a military stronghold and has witnessed various historical events. It provides visitors with a glimpse into the glory of the Bahmani rulers, offering an enriching experience for history enthusiasts." },
+            { name: "🕌 Jama Masjid", image: "g2.png", description: "Built in the 14th century, Jama Masjid is one of the most important Islamic landmarks in South India. Its distinctive architectural style, including 68 domes and a grand prayer hall, makes it stand out among other historical mosques. It is a peaceful place for reflection and worship, and its design draws inspiration from Islamic, Persian, and Indian styles, reflecting the cultural synthesis during the Bahmani period." },
+            { name: "🌿 Buddha Vihar", image: "g3.png", description: "Buddha Vihar is a tranquil Buddhist center located in Kalaburagi. It is designed to provide spiritual solace and features a beautiful dome and meditation halls. The vihar serves as an important center for Buddhist learning and cultural exchange. Visitors can immerse themselves in meditation or explore the peaceful surroundings that reflect the teachings of Lord Buddha." },
+            { name: "🏰 Haft Gumbaz", image: "g4.png", description: "Haft Gumbaz, also called the 'Seven Domes,' is a striking architectural monument where Bahmani rulers were buried. The tombs are distinguished by their large domes and intricate stonework, offering visitors a glimpse into the grand scale of the Bahmani Sultanate’s architecture. This site is also noted for its serene surroundings, which add to its spiritual and historical allure." },
+            { name: "🏛 Sharana Basaveshwara Temple", image: "g5.png", description: "The Sharana Basaveshwara Temple is dedicated to the revered saint Basaveshwara, who was an important figure in the Lingayat movement. The temple is known for its calm ambiance and unique architecture, featuring detailed sculptures and carvings. The temple attracts pilgrims and is an essential part of the spiritual heritage of Kalaburagi." }
+        ],
+        [
+            { name: "🍲 Jolad Roti", image: "vroti.jpeg", description: "Jolad Roti, made from sorghum flour, is a staple food in North Karnataka. This traditional, gluten-free flatbread is often served with spicy curries, chutneys, and lentils. Its hearty texture makes it a perfect accompaniment to spicy dishes, offering a satisfying and nourishing meal that reflects the simplicity and authenticity of Karnataka's rural cuisine." },
+            { name: "🍛 Hyderabadi Biryani", image: "g6.png", description: "Hyderabadi Biryani is an aromatic rice dish with layers of spiced meat (usually chicken or mutton), and saffron-infused rice. This dish, influenced by Persian and Mughlai culinary traditions, has gained popularity across South India. Kalaburagi offers a version of this biryani that is rich in flavor, often served with yogurt-based raita and fresh salad, making it a perfect meal for any occasion." },
+            { name: "🍞 Badami Halwa", image: "g7.png", description: "Badami Halwa is a traditional dessert from Kalaburagi, made from almonds (badam), ghee, and sugar. This rich and aromatic sweet has a smooth, velvety texture and is typically prepared during special occasions and festivals. Its luscious consistency and delightful flavor make it a favorite among locals and visitors alike, representing the sweetness of the region's culinary heritage." },
+            { name: "🍨 Shahi Tukda", image: "g8.png", description: "Shahi Tukda is a royal dessert that originated in the Mughal era and is a favorite in Kalaburagi. This indulgent dish consists of deep-fried bread soaked in rich sugar syrup, topped with cardamom, saffron, and garnished with dry fruits. Its unique combination of textures and aromatic spices makes it a perfect sweet treat after a hearty meal. Often served during festive occasions, Shahi Tukda is a must-try for anyone visiting the region." }
+        ]
+    );
+}else if (destinationName === "Chikkaballapura") {
+    setDestinationData(
+        "Chikkaballapura",
+        "images/cb1.jpg", // Placeholder image for Chikkaballapura
+        "Chikkaballapura, a charming town in Karnataka, is known for its stunning natural beauty, historical temples, and trekking destinations. Surrounded by hills and rock formations, it is a haven for nature lovers, adventure enthusiasts, and pilgrims. The region's rich cultural heritage, combined with its vibrant traditions, attracts travelers seeking both peace and adventure. Chikkaballapura's scenic landscapes, especially the iconic Nandi Hills and the sacred temples, make it a popular getaway from nearby cities. With its picturesque views, ancient structures, and spiritual significance, the town offers a perfect blend of nature, history, and spirituality.",
+        "images/cb2.jpg",
+        [
+            {
+                name: "🌟 Ranganathaswami Temple",
+                image: "cb3.jpg",
+                description: "The Ranganathaswami Temple in Chikkaballapura is a prominent pilgrimage site dedicated to Lord Ranganatha, a form of Lord Vishnu. The temple’s intricate architecture, historic significance, and peaceful surroundings make it a must-visit. It attracts devotees from across the region who come here for its religious importance and spiritual ambiance. The temple hosts several festivals throughout the year, drawing large crowds. The carvings on the temple’s walls and the serenity of the place enhance its allure, offering a blend of culture and devotion. The temple is a wonderful reflection of the local traditions and values."
+            },
+            {
+                name: "🌄 Skandagiri Trekking",
+                image: "cb4.png",
+                description: "Skandagiri, also known as Kalavara Durga, is a popular trekking destination near Chikkaballapura. The trek is famous for its scenic beauty and stunning views of the surrounding hills and valleys. Skandagiri offers an easy to moderate trekking experience, making it suitable for both beginners and seasoned trekkers. The peak provides a mesmerizing view of the sunrise, which is a major attraction for trekkers. The path through lush forests and rocky terrain adds to the adventure. A visit to Skandagiri offers a perfect blend of nature, adventure, and tranquility, making it one of the top trekking spots in Karnataka."
+            },
+            {
+                name: "🏞 Srinivasa Sagara",
+                image: "cb5.png",
+                description: "Srinivasa Sagara is a picturesque reservoir located near Chikkaballapura. This serene water body, surrounded by lush greenery and rocky landscapes, is a popular spot for relaxation and nature walks. The dam provides a tranquil escape from the hustle and bustle of city life. Visitors often enjoy a peaceful walk along the shores or indulge in a picnic with family and friends. The area is also home to various species of birds, making it a great spot for birdwatching. Srinivasa Sagara’s calm ambiance and stunning surroundings offer an ideal retreat for nature enthusiasts."
+            },
+            {
+                name: "⛰️ Chennakeshava Betta",
+                image: "cb6.jpg",
+                description: "Chennakeshava Betta is a hill located near Chikkaballapura and is known for its scenic beauty and historical significance. The hill is named after the Chennakeshava Temple situated on top of the hill, dedicated to Lord Vishnu. The temple is an important spiritual site and attracts pilgrims and tourists alike. The hike to the top offers breathtaking views of the surrounding landscape, including green fields and distant hills. It is a peaceful place for meditation, offering a tranquil atmosphere. The site combines both natural beauty and spiritual importance, making it a perfect destination for nature lovers and history enthusiasts."
+            },
+        ],
+        [
+        { 
+    name: "🍪 Benne Biscuit", 
+    image: "cb7.jpg", 
+    description: "Benne Biscuit, a popular treat from Chikkaballapura, is a rich, buttery biscuit that melts in your mouth. Made from a combination of butter, flour, and sugar, these biscuits are often enjoyed as a snack with a cup of tea. The biscuits are crispy on the outside and soft on the inside, making them a delightful addition to any meal or a perfect gift for those visiting the region. Benne Biscuit is a traditional recipe passed down through generations and remains a favorite for both locals and tourists. This local delicacy is a symbol of the region's warm hospitality and love for flavorful treats."
+},
+{ 
+    name: "🍬 Laddoo", 
+    image: "cb8.webp", 
+    description: "Laddoo, a beloved sweet in Chikkaballapura, is made with a variety of ingredients like besan (gram flour), ghee, sugar, and cardamom. These sweet balls are often served during festivals, weddings, and special occasions. The taste of Laddoo is rich and aromatic, with a melt-in-your-mouth texture. It is one of the most iconic sweets in the region, loved for its simplicity and sweetness. Laddoos are typically served to guests and are a must-try for anyone visiting Chikkaballapura. The balance of flavors makes it a perfect treat for anyone with a sweet tooth."
+},
+{ 
+    name: "🍚 Ragi Mudde", 
+    image: "ch-6.png", 
+    description: "Ragi Mudde, a staple food in Chikkaballapura, is a traditional dish made from finger millet (ragi) flour. The dough is cooked in water and rolled into round balls, often served with a spicy sambar or curry. It is a healthy and hearty meal, popular among locals for its nutritional value and ability to provide long-lasting energy. Ragi Mudde is a great source of calcium, iron, and fiber, making it a favorite food among people of all ages. This simple yet wholesome dish is a must-try when visiting the region. Its versatility makes it a perfect complement to any meal or a fulfilling snack."
+},
+{ 
+    name: "🍛 Bisibele Bath", 
+    image: "cb12.jpg", 
+    description: "Bisibele Bath, a famous dish in Chikkaballapura, is a flavorful and spicy rice dish made with a combination of rice, lentils, vegetables, and a special blend of spices. The dish is cooked in a thick, tangy sauce made with tamarind and a variety of aromatic spices, giving it a rich and unique flavor. Bisibele Bath is often served with a side of curd or papad and is a favorite comfort food among locals. It is a must-try for food enthusiasts looking to explore the flavors of Chikkaballapura. The combination of spices creates a satisfying and robust dish that leaves a lasting impression."
+}
+        ]
+    );
+}else if (destinationName === "Mandya") {
+    setDestinationData(
+        "Mandya ",
+        "images/mdm.jpg", // Placeholder image for Mandya
+        "Mandya, located in the southern part of Karnataka, is known as the 'Sugar City' due to its extensive sugarcane plantations and sugar industries. The district is not only famous for its agricultural activities, such as the production of sugar, paddy, and groundnut, but also for its rich cultural heritage. With lush green fields, picturesque lakes, and historical temples, Mandya is a perfect blend of nature and heritage. The region is ideal for those looking to explore the tranquil beauty of rural Karnataka, where agriculture and spirituality thrive together.",
+        "images/mandya-overview.jpg",
+        [
+            { 
+                name: "🌳 Ranganathittu Bird Sanctuary", 
+                image: "md1.png", 
+                description: "Ranganathittu Bird Sanctuary is a haven for bird lovers, located along the banks of the Kaveri River. It is one of the most important bird sanctuaries in South India, hosting thousands of migratory birds, including painted storks, herons, and kingfishers. The sanctuary provides boat rides that offer a close-up view of these birds in their natural habitat, making it a popular spot for nature enthusiasts and photographers alike. The lush greenery and serene waters make it an ideal escape from the city, offering tranquility and beauty." 
+            },
+            { 
+                name: "⛪ Srirangapatna", 
+                image: "md2.png", 
+                description: "Srirangapatna is a historical town that served as the capital of the Mysore Kingdom under Tipu Sultan. This town is rich in cultural and architectural heritage, with notable landmarks like the Sriranganatha Temple, which features stunning Dravidian-style architecture. The ruins of Tipu Sultan's Summer Palace, along with the Jumma Masjid and the nearby Gumbaz, a tomb of Tipu Sultan and his family, provide an intriguing glimpse into the past. This town, surrounded by the Kaveri River, is an excellent destination for history buffs and those interested in India's royal legacy." 
+            },
+            { 
+                name: "🌞 Kaveri River", 
+                image: "md3.png", 
+                description: "The Kaveri River, one of the major rivers of South India, runs through Mandya and serves as an important water source for agriculture and daily life in the region. The river offers not only a lifeline for the local community but also a tranquil spot for visitors. The scenic views along its banks, the peaceful atmosphere, and the occasional sighting of local wildlife make it a lovely place for relaxation, fishing, and boat rides. Whether you're looking to meditate by the water or simply enjoy the natural beauty, the Kaveri River provides a serene escape." 
+            },
+            { 
+                name: "🌺 Melukote", 
+                image: "md4.png", 
+                description: "Melukote, a small but culturally significant town near Mandya, is renowned for its Cheluvanarayana Swamy Temple, an important pilgrimage site for Hindus. The town's serene surroundings and historical significance make it a peaceful getaway. The temple is famous for its unique Vijayanagara-style architecture and the annual festival that attracts devotees from all over India. The surrounding hills, dotted with ancient temples and fortresses, add to the charm of Melukote, making it a must-visit for history enthusiasts and those looking to experience the spiritual side of Karnataka." 
+            },
+            { 
+                name: "🌾 Ranganathaswamy Temple", 
+                image: "md5.png", 
+                description: "The Ranganathaswamy Temple in Mandya is an important religious site dedicated to Lord Ranganatha, a form of Lord Vishnu. Known for its elaborate architecture and intricate carvings, the temple attracts devotees from across the state. The peaceful and spiritual environment makes it a perfect place for meditation and prayer. The temple's significance is heightened during religious festivals, where thousands of devotees gather to offer their prayers, making it a vibrant spot in the region." 
+            }
+        ],
+        [
+            { 
+                name: "🍞 Akki Roti", 
+                image: "md6.png", 
+                description: "Akki Roti is a traditional flatbread made from rice flour, seasoned with spices and sometimes vegetables like onions and coriander. This simple yet flavorful dish is often enjoyed with chutney or curry, and is a popular breakfast or dinner option in Mandya. The soft texture of the roti, combined with its savory flavors, makes it a beloved dish in the region." 
+            },
+            { 
+                name: "🍽 Maddur Vade", 
+                image: "md7.png", 
+                description: "Maddur Vade is a crispy, deep-fried snack originating from Mandya. Made with rice flour and all-purpose flour, seasoned with cumin, curry leaves, and green chilies, this crunchy treat is perfect for snacking or as an accompaniment to a cup of tea. Its unique flavor and texture make it one of the signature street foods of Mandya, loved by both locals and visitors." 
+            },
+            { 
+                name: "🍮 Mysore Pak", 
+                image: "m-pak.avif", 
+                description: "Mysore Pak is a rich, sweet dessert that originated in the royal kitchens of Mysore. Made with ghee, gram flour, and sugar, it has a melt-in-the-mouth texture that is both indulgent and satisfying. Known for its luxurious taste, Mysore Pak is a festive treat, often served during celebrations and special occasions. A must-try delicacy in Mandya, it's a perfect representation of the region's sweet culinary heritage." 
+            },
+            { 
+                name: "🍖 Mandya-style Mutton Curry", 
+                image: "md8.png", 
+                description: "Mandya-style Mutton Curry is a flavorful dish made with tender pieces of mutton cooked in a rich, aromatic gravy of traditional spices. The dish includes ingredients like garlic, ginger, coriander, and cumin, resulting in a spicy and robust flavor. It is commonly served with rice or roti and is a popular dish among the locals, known for its hearty and satisfying taste." 
+            },
+            { 
+                name: "🍞 Ragi Mudde", 
+                image: "mudde-1.webp", 
+                description: "Ragi Mudde is a nutritious and traditional dish made from finger millet (ragi) flour. The flour is boiled with water to form a dough-like consistency, shaped into balls, and served with sambar or curry. It is a staple food in Mandya and other regions of Karnataka, prized for its health benefits and ability to provide long-lasting energy. This wholesome dish is a part of the daily diet in rural areas and reflects the simplicity and richness of local cuisine." 
+            }
+        ]
+    );
+}
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function fetchNearbyPlaces(lat, lon) {
+    const apiKey = "t2w_eK3SDfhrdHD4Ek-WDYlXYutwZqfEXBn5vRNvv64";
+    const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&radius=70000&q=attractions&apikey=${apiKey}`;
+
+    // Define the undesired keywords
+    const undesiredKeywords = [
+        "complex", "road", "Basatis and Inscriptions", "street", "highway", "hotel", "restaurant", "food", "kere",
+        "bridge", "resort", "Winter Greens", "Sons EE Ah Ray Ranch", "Major Rama Raghoba Rane", "Sagara Mathsalaya",
+        "Central Market", "108ft basaveshwara statue", "Tannirbhavi View Point", "fort", "chudimahal", "bhusani dam",
+        "akkalkot fort", "daroji bear sanctuary", "daroji bear wildlife sanctuary", "lohia nagar lake", "tarihal pond",
+        "Two Storeyed Mandapa", "Ruined Tank Adjoining the Soolai Bazaar", "Group of Monuments at Hampi", "Stone Aqueduct-Shrine Chamber"
+    ];
+
+    // Manually map place names to local image paths
+    const placeImages = {
+        "Kaup Village": "./images/up1.png",
+        "Baba Budangiri": "./images/baba-budangiri.png",
+        "Kavikal Gandi Viewpoint": "./images/kavikal-gandi.png",
+        "Shri Guru Dattatreya Swami Dattapita": "./images/dattatreya-pita.png",
+        "Yagachi Water Sports Park": "./images/yagachi-water-sports.png",
+        "Halebeedu Archeological Site": "./images/halebeedu.png",
+        // Add more mappings as needed
+    };
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            // console.log("Fetched data:", data);
+
+            const placesList = document.getElementById("places-list");
+            placesList.innerHTML = "";
+
+            if (data.items && data.items.length > 0) {
+                // Directly use all fetched places
+                const touristPlaces = data.items;
+
+                // console.log("All fetched places:", touristPlaces);
+
+                if (touristPlaces.length > 0) {
+                    // Apply TSP to sort places by proximity
+                    const sortedPlaces = tspNearestNeighbor(touristPlaces, lat, lon);
+                    console.log("Sorted places by TSP:", sortedPlaces);
+
+                    // Filter out places that contain undesired keywords
+                    const filteredPlaces = sortedPlaces.filter(place => {
+                        const placeTitle = place.title.toLowerCase();
+                        return !undesiredKeywords.some(keyword => placeTitle.includes(keyword.toLowerCase()));
+                    });
+
+                    // console.log("Filtered places:", filteredPlaces);
+
+                    // Slice the places (5 to 10) first
+                    const slicedPlaces = filteredPlaces.slice(5, 10);
+
+                    // Sort the sliced places by distance
+                    slicedPlaces.sort((a, b) => {
+                        const distanceA = calculateDistance(lat, lon, a.position.lat, a.position.lng);
+                        const distanceB = calculateDistance(lat, lon, b.position.lat, b.position.lng);
+                        return distanceA - distanceB; // Sort in ascending order of distance
+                    });
+
+                    console.log("Sorted sliced places by distance:", slicedPlaces);
+
+                    // Display the places in ascending order of distance
+                    slicedPlaces.forEach(place => {
+                        const placeItem = document.createElement("div");
+                        placeItem.classList.add("place-item");
+
+                        const placeName = place.title || "No name available";
+                        const placeDescription = place.address ? place.address.label : "No description available";
+                        const placeLat = place.position.lat;
+                        const placeLon = place.position.lng;
+                        const distance = calculateDistance(lat, lon, placeLat, placeLon).toFixed(2);
+
+                        // Fetch the image path from the mapping or use a placeholder
+                        const imagePath = placeImages[placeName] || "./images/placeholder.png";
+
+                        placeItem.innerHTML = `
+                            <div class="place-info">
+                                <img src="${imagePath}" alt="${placeName}" style="width: 100%; height: auto; margin-bottom: 10px;">
+                                <h3>${placeName}</h3>
+                                <p>${placeDescription}</p>
+                                <p><strong>Distance:</strong> ${distance} km</p>
+                            </div>
+                        `;
+                        placesList.appendChild(placeItem);
+                    });
+                } else {
+                    placesList.innerHTML = "<p>No nearby tourist places found.</p>";
+                }
+            } else {
+                placesList.innerHTML = "<p>No places found in the data.</p>";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching places:", error);
+            document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
+        });
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return Infinity;
+    const R = 6371; // Earth radius in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+        0.5 - Math.cos(dLat) / 2 +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        (1 - Math.cos(dLon)) / 2;
+    return R * 2 * Math.asin(Math.sqrt(a));
+}
+
+function tspNearestNeighbor(places, lat, lon) {
+    const visited = [];
+    let currentLat = lat;
+    let currentLon = lon;
+
+    while (places.length > 0) {
+        let nearestIndex = -1;
+        let minDistance = Infinity;
+
+        places.forEach((place, index) => {
+            const distance = calculateDistance(currentLat, currentLon, place.position.lat, place.position.lng);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestIndex = index;
+            }
+        });
+
+        if (nearestIndex !== -1) {
+            visited.push(places[nearestIndex]);
+            currentLat = places[nearestIndex].position.lat;
+            currentLon = places[nearestIndex].position.lng;
+            places.splice(nearestIndex, 1);
+        }
+    }
+
+    return visited;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fetch(apiUrl)
+.then(response => response.json())
+.then(data => {
+    console.log("Fetched data:", data);
+
+    const placesList = document.getElementById("places-list");
+    placesList.innerHTML = "";
+
+    if (data.items && data.items.length > 0) {
+         // Filter for tourist places, excluding hotels, food-related places, and specific exclusions
+         const touristPlaces = data.items.filter(place => {
+            const categories = place.categories || [];
+
+            // Check if place is a tourist attraction
+            const isTouristPlace = categories.some(category =>
+                category.id.includes("tourist-attraction") ||
+                category.name.toLowerCase().includes("tourist") ||
+                category.name.toLowerCase().includes("attraction")
+            );
+
+            // Exclude undesired types (complex, roads, streets, highways, food, hotels, Basatis, Inscriptions, etc.)
+            const undesiredKeywords = [
+                "complex", "road", "Basatis and Inscriptions", "street", "Clock Tower","highway",
+                "hotel", "restaurant", "food", "kere", "bridge", "resort",
+                "Sons EE Ah Ray Ranch", "Major Rama Raghoba Rane", "Sagara Mathsalaya",
+                "Central Market", "Tannirbhavi View Point","Pigeons Feeding Place","Tipu Sultan's Armoury","Vadyaranga Mantapa","Lets We Forget",
+                "Shri Mathanda Cheeyamma Smaraka"
+            ];
+
+            const containsUndesiredKeyword = undesiredKeywords.some(keyword =>
+                place.title.toLowerCase().includes(keyword.toLowerCase()) // Case-insensitive comparison
+            );
+
+            // Only include places that are tourist attractions and do not match undesired keywords
+            return isTouristPlace && !containsUndesiredKeyword;
+        });
+
+        // Apply TSP to find the optimal route
+        const optimalRoute = tspGreedy(touristPlaces, lat, lon);
+        console.log("Optimal route:", optimalRoute);
+
+        // Slice results from index 5 to 11 (6th to 12th places)
+        const limitedPlaces = optimalRoute.slice(5, 10);
+        console.log("Limited places (5th to 10th):", limitedPlaces);
+
+        if (limitedPlaces.length > 0) {
+            // Generate HTML for each tourist place
+            limitedPlaces.forEach(place => {
+                const placeItem = document.createElement("div");
+                placeItem.classList.add("place-item");
+
+                const placeName = place.title || "No name available";
+                const placeDescription = place.address ? place.address.label : "No description available";
+                const placeImage = customImages[placeName] || "./images/placeholder.jpg";
+
+                // Calculate distance for each place
+                const placeLat = place.position.lat;
+                const placeLon = place.position.lng;
+                const distance = calculateDistance(lat, lon, placeLat, placeLon).toFixed(2); // in kilometers
+
+                const placeImageElement = document.createElement("img");
+                placeImageElement.src = placeImage;
+                placeImageElement.alt = placeName;
+                placeImageElement.height = 250; // Set height
+                placeImageElement.width = 350; // Set width
+
+                placeItem.innerHTML = `
+                    <div class="place-info">
+                        <h3>${placeName}</h3>
+                        <p>${placeDescription}</p>
+                        <p><strong>Distance: </strong>${distance} km</p>
+                    </div>
+                `;
+                placeItem.insertBefore(placeImageElement, placeItem.firstChild);
+                placesList.appendChild(placeItem);
+            });
+        } else {
+            placesList.innerHTML = "<p>No nearby tourist places found within 75 km.</p>";
+        }
+    } else {
+        placesList.innerHTML = "<p>No nearby places found.</p>";
+    }
+})
+.catch(error => {
+    console.error("Error fetching places:", error);
+    document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
+});
+
+// Custom function to calculate the distance between two sets of lat/lon coordinates
+function calculateDistance(lat1, lon1, lat2, lon2) {
+const R = 6371; // Earth radius in kilometers
+const dLat = (lat2 - lat1) * Math.PI / 180;
+const dLon = (lon2 - lon1) * Math.PI / 180;
+const a =
+    0.5 - Math.cos(dLat) / 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    (1 - Math.cos(dLon)) / 2;
+const distance = R * 2 * Math.asin(Math.sqrt(a)); // Calculate distance in km
+return distance;
+}
+
+// Travel Salesman Problem (TSP) - Greedy Nearest Neighbor solution
+function tspGreedy(places, startLat, startLon) {
+const unvisited = [...places];
+const route = [];
+let currentLat = startLat;
+let currentLon = startLon;
+
+while (unvisited.length > 0) {
+    // Find the nearest unvisited place
+    let nearestPlace = null;
+    let minDistance = Infinity;
+
+    for (let i = 0; i < unvisited.length; i++) {
+        const place = unvisited[i];
+        const distance = calculateDistance(currentLat, currentLon, place.position.lat, place.position.lng);
+        if (distance < minDistance) {
+            nearestPlace = place;
+            minDistance = distance;
+        }
+    }
+
+    // Add the nearest place to the route and remove it from unvisited places
+    route.push(nearestPlace);
+    unvisited.splice(unvisited.indexOf(nearestPlace), 1);
+
+    // Update current location to the last visited place's coordinates
+    currentLat = nearestPlace.position.lat;
+    currentLon = nearestPlace.position.lng;
+}
+
+return route;
+}
+}

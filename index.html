@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>complete responsive tour and travel agency website design tutorial</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+
+    <link rel="stylesheet" href="style.css">
+
+   
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+</head>
+<body>
+    
+
+
+<header>
+
+    <div id="menu-bar" class="fas fa-bars"></div>
+
+    <a href="#" class="logo"><span>T</span>ravel</a>
+    <div class="search-bar-container">
+        <label for="search-bar" class="search-icon">&#128269;</label>
+        <input type="text" id="search-bar" placeholder="Search for packages...">
+    </div>
+
+    <nav class="navbar">
+        <a href="#home">home</a>
+        
+        <a href="#packages">Destinations</a>
+        
+        <a href="#gallery">Discoveries</a>
+        <a href="#review">review</a>
+        <a href="#contact">contact</a>
+        
+    </nav>
+
+    <div class="icons">
+        <i class="fas fa-search" id="search-btn"></i>
+        <i class="fas fa-heart" id="heart-btn"></i>
+    </div>
+
+
+
+
+
+      <form action="" class="search-bar-container">
+        <input type="search" id="search-bar" placeholder="search here...">
+        <label for="search-bar" class="fas fa-search"></label>
+    </form>  
+
+</header>
+
+
+
+
+
+<section class="home" id="home">
+    <div class="content">
+        <h3 id="video-title">Handcrafted Heritage</h3>
+        <p id="video-description">Explore the intricate world of traditional handicrafts, showcasing timeless artistry and cultural legacy</p>
+       
+        <a href="#" id="discover-btn" class="btn">Discover More</a>
+    </div>
+
+    <div class="controls">
+       
+        <span class="vid-btn active" data-src="images/handicraft.mp4" data-title="Handcrafted Heritage" data-description="Explore the intricate world of traditional handicrafts, showcasing timeless artistry and cultural legacy."></span>
+
+       
+        <span class="vid-btn" data-src="images/wild.mp4" data-title="Wilderness Chronicles" data-description="Venture into the heart of the wild, where nature’s raw beauty awaits."></span>
+
+       
+        <span class="vid-btn" data-src="images/yaksha.mp4" data-title="Legends of Yaksha" data-description="Discover the ancient legends and mysterious landscapes of Yaksha."></span>
+
+     
+        <span class="vid-btn" data-src="images/dasara.mp4" data-title="Dasara Tales" data-description="Experience the cultural richness and festive vibes of Dasara celebrations."></span>
+
+        <span class="vid-btn" data-src="images/vid-3.mp4" data-title="Hidden Odyssey" data-description="Uncover hidden destinations and explore the wonders that lie off the beaten path."></span>
+    </div>
+
+    <div class="video-container">
+        <video src="images/handicraft.mp4" id="video-slider" loop autoplay muted></video>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const discoverBtn = document.getElementById("discover-btn");
+        const videoButtons = document.querySelectorAll(".vid-btn");
+        const videoSlider = document.getElementById("video-slider");
+        const videoTitle = document.getElementById("video-title");
+        const videoDescription = document.getElementById("video-description");
+
+        let activeVideo = 1; 
+
+   
+        const videoContent = [
+            { title: "Handcrafted Heritage", description: "Explore the intricate world of traditional handicrafts, showcasing timeless artistry and cultural legacy." },
+            { title: "Wilderness Chronicles", description: "Venture into the heart of the wild, where nature’s raw beauty awaits." },
+            { title: "Cultural Chronicles ", description: "Uncover the treasures of culture, where every tradition speaks volumes." },
+            { title: "Rhythms and Rituals", description: "Experience the symphony of rituals, where rhythm and culture intertwine." },
+            { title: "Serenity and Silence", description: "Find your calm in a world of peace, where every breath feels at ease" }
+        ];
+
+        videoButtons.forEach((btn, index) => {
+            btn.addEventListener("click", () => {
+              
+                activeVideo = index + 1;
+
+             
+                videoSlider.src = btn.getAttribute("data-src");
+
+               
+                videoTitle.textContent = videoContent[index].title;
+                videoDescription.textContent = videoContent[index].description;
+
+             
+                videoButtons.forEach(button => button.classList.remove("active"));
+
+            
+                btn.classList.add("active");
+            });
+        });
+
+     
+        discoverBtn.addEventListener("click", (event) => {
+            event.preventDefault(); 
+            window.location.href = `info.html?video=${activeVideo}`; 
+        });
+    });
+</script>
+
+
+
+<section class="packages" id="packages">
+
+    <h1 class="heading">
+        <span>D</span>
+        <span>e</span>
+        <span>s</span>
+        <span>t</span>
+        <span>i</span>
+        <span>n</span>
+        <span>a</span>
+        <span>t</span>
+        <span>i</span>
+        <span>o</span>
+        <span>n</span>
+        <span>s</span>
+    </h1>
+
+<div id="favorites-menu" class="fav-menu" style="display: none;">
+    <h2>Your Favorites</h2>
+    <ul id="favorite-list"></ul>
+    <button onclick="closeFavorites()">Close</button>
+</div>
+    
+    <div class="box-container">
+        <div class="packages-container">
+     
+         
+        
+            <div class="package-box" id="chikkamagaluru-package-section" onclick="window.location.href='ckm-details.html?destination=Chikkamagaluru&lat=13.3400&lon=75.7800';">
+            <img src="images/ckm-main.jpg" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Chikkamagaluru</h3>
+                <p>Explore the beautiful landscapes of Chikkamagaluru</p>
+            </div>
+           
+
+        </div>
+        </div>
+       
+
+        <div class="package-box" id="bangalore-package-section" onclick="window.location.href='ckm-details.html?destination=Bangalore&lat=12.9716&lon=77.5946';">
+<img src="images/bnglr-palace.png" alt="Mysore" width="600px" height="389px">
+<i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Bangalore</h3>
+                <p>Explore the beautiful landscapes of Bangalore</p>
+            </div>
+            
+        </div>
+        
+        
+
+        <div class="package-box" id="mysore-package-section" onclick="window.location.href='ckm-details.html?destination=Mysore&lat=12.2958&lon=76.6394';">
+            <img src="images/mmm.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Mysore</h3>
+                <p>Explore the beautiful landscapes of Mysore</p>
+            </div>
+            
+        </div>
+
+
+
+        <div class="package-box" id="coorg-package-section" onclick="window.location.href='ckm-details.html?destination=Coorg&lat=12.3344&lon=95.7519';">
+            <img src="images/maincoorg.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Coorg</h3>
+                <p>Explore the beautiful landscapes of Coorg</p>
+            </div>
+         
+        </div>
+
+
+
+        <div class="package-box" id="mangalore-package-section" onclick="window.location.href='ckm-details.html?destination=Mangalore&lat=12.8717&lon=74.8560';">
+            <img src="images/mangalore.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Mangalore</h3>
+                <p>Explore the beautiful landscapes of Mysore</p>
+            </div>
+           
+        </div>
+
+
+        <div class="package-box" id="vijayapura-package-section" onclick="window.location.href='ckm-details.html?destination=Vijayapura&lat=16.8290&lon=75.7152';">
+            <img src="images/bijapur.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Vijayapura</h3>
+                <p>Explore the beautiful landscapes of Vijayapura</p>
+            </div>
+     
+        </div>
+
+        <div class="package-box" id="shivamogga-package-section" onclick="window.location.href='ckm-details.html?destination=Shivamogga&lat=13.9339&lon=75.5731';">
+            <img src="images/smg.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Shivamogga</h3>
+                <p>Explore the beautiful landscapes of Shivamogga</p>
+            </div>
+           
+        </div>
+
+        <div class="package-box" id="uttara-kannada-package-section" onclick="window.location.href='ckm-details.html?destination=Uttara+Kannada&lat=14.5635&lon=74.1262';">
+            <img src="images/UK.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Uttara Kannada</h3>
+                <p>Explore the beautiful landscapes of Uttara Kannada </p>
+            </div>
+           
+        </div>
+
+
+        <div class="package-box" id="udupi-package-section" onclick="window.location.href='ckm-details.html?destination=Udupi&lat=13.3400&lon=74.7480';">
+            <img src="images/udupi.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Udupi</h3>
+                <p>Explore the beautiful landscapes of Udupi</p>
+            </div>
+           
+        </div>
+
+
+       
+        <div class="package-box" id="vijayanagara-package-section" onclick="window.location.href='ckm-details.html?destination=Vijayanagara&lat=15.1968&lon=76.7941';">
+            <img src="images/vijaynagar.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Vijayanagara</h3>
+                <p>Explore the beautiful landscapes of Vijayanagara </p>
+            </div>
+            
+        </div>
+
+        <div class="package-box" id="belagavi-package-section" onclick="window.location.href='ckm-details.html?destination=Belagavi&lat=14.2322&lon=76.9604';">
+            <img src="images/bo-711.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Belagavi</h3>
+                <p>Explore the beautiful landscapes of Chitradurga </p>
+            </div>
+           
+        </div>
+        
+        
+        <div class="package-box" id="hubli-dharwad-package-section" onclick="window.location.href='ckm-details.html?destination=Hubli&lat=15.3647&lon=75.1394';">
+            <img src="images/hubli-main.webp" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Hubli-Dharwad</h3>
+                <p>Explore the beautiful landscapes of Hubli-Dharwad</p>
+            </div>
+            
+        </div>
+
+        
+        <div class="package-box" id="koppal-package-section" onclick="window.location.href='ckm-details.html?destination=Koppal&lat=15.3447&lon=76.1367';">
+            <img src="images/koppal-main.webp" alt="Chikkamagaluru" width="600px" height="400px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Koppal</h3>
+                <p>Explore the beautiful landscapes of Koppal</p>
+            </div>
+         
+        </div>
+
+        
+        <div class="package-box" id="kalaburagi-package-section" onclick="window.location.href='ckm-details.html?destination=Kalaburagi&lat=17.3273&lon=76.8327';">
+            <img src="images/kalburgi-main.jpg" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Kalaburagi</h3>
+                <p>Explore the beautiful landscapes of Kalaburagi</p>
+            </div>
+           
+        </div>
+
+        
+       
+
+        
+        <div class="package-box" id="bagalkote-package-section" onclick="window.location.href='ckm-details.html?destination=Bagalkote&lat=16.1817&lon=75.7059';">
+            <img src="images/bagalkote.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Bagalkote</h3>
+                <p>Explore the beautiful landscapes of Bagalkote </p>
+            </div>
+            
+        </div>
+
+        <div class="package-box" id="chikkaballapura-package-section" onclick="window.location.href='ckm-details.html?destination=Chikkaballapura&lat=13.4216&lon=77.7343';">
+            <img src="images/isha.webp" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Chikkaballapura</h3>
+                <p>Explore the beautiful landscapes of  Chikkaballapura </p>
+            </div>
+            
+        </div>
+
+
+        <div class="package-box" id="dakshina-kannada-package-section" onclick="window.location.href='ckm-details.html?destination=Dakshina Kannada&lat=12.9157&lon=75.0820';">
+            <img src="images/dk.png" alt="Dakshina Kannada" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Dakshina Kannada</h3>
+                <p>Explore the beautiful landscapes of  Dakshina Kannada </p>
+            </div>
+           
+        </div>
+
+        <div class="package-box" id="chitradurga-package-section" onclick="window.location.href='ckm-details.html?destination=Chitradurga&lat=14.2322&lon=76.9604';">
+            <img src="images/chitradurga-fort.jpg" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Chitradurga</h3>
+                <p>Explore the beautiful landscapes of Chitradurga.</p>
+            </div>
+           
+        </div>
+      
+        <div class="package-box" id="mandya-package-section" onclick="window.location.href='ckm-details.html?destination=Mandya&lat=12.5235&lon=76.8975';">
+            <img src="images/mandya.png" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Mandya</h3>
+                <p>Explore the beautiful landscapes of Mandya </p>
+            </div>
+            
+        </div>
+
+
+        <div class="package-box" id="bidar-package-section" onclick="window.location.href='ckm-details.html?destination=Bidar&lat=17.9104&lon=77.5199';">
+            <img src="images/bidaro.JPG" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Bidar</h3>
+                <p>Explore the beautiful landscapes of Bidar</p>
+            </div>
+           
+        </div>
+
+        <div class="package-box" id="hassan-package-section" onclick="window.location.href='ckm-details.html?destination=Hassan&lat=13.0033&lon=76.1004';">
+            <img src="images/hh24.jpg" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Hassan</h3>
+                <p>Explore the beautiful landscapes of Hassan </p>
+            </div>
+           
+        </div>
+        
+        <div class="package-box" id="haveri-package-section" onclick="window.location.href='ckm-details.html?destination=Haveri&lat=14.7951&lon=75.3991';">
+            <img src="images/sm14.webp" alt="Chikkamagaluru" width="600px" height="389px">
+            <i class="fav-icon fas fa-heart" onclick="event.stopPropagation(); toggleFavorite(this)"></i>
+            <div class="content">
+                <h3><i class="fas fa-map-marker-alt"></i> Haveri</h3>
+                <p>Explore the beautiful landscapes of Haveri </p>
+            </div>
+           
+        </div>
+
+</section>
+
+
+
+
+
+<section class="gallery" id="gallery">
+
+    <h1 class="heading">
+        <span>D</span>
+        <span>i</span>
+        <span>s</span>
+        <span>c</span>
+        <span>o</span>
+        <span>v</span>
+        <span>e</span>
+        <span>r</span>
+        <span>i</span>
+        <span>e</span>
+        <span>s</span>
+    </h1>
+
+    <div class="box-container">
+
+        <div class="box">
+            <img src="images/swami.png" alt="">
+            <div class="content">
+                <h3>Mantralaya</h3>
+                <p>Raghavendra Matha is located in Mantralaya, which is in the Raichur district of Karnataka. It is a significant pilgrimage site dedicated to Sri Raghavendra.</p>
+              
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/hanuman.png" alt="">
+            <div class="content">
+                <h3>Anjanadri Betta</h3>
+                <p>Born to Anjana, lord Hanuman was also called Anjaneya and hence the hill is called Anjanadri hills, believed to be his birthplace,located in koppal district.</p>
+                
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/amrutha.png" alt="">
+            <div class="content">
+                <h3>Amrutesvara temple</h3>
+                <p>Amruteshwara is a Shaivite temple with a Shiva linga brought from River Gandaki in Nepal. A beautiful murti (idol) of Sharadha Devi is installed on its right.Located in Chikkamagaluru district.</p>
+                
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/horanadudevi.png.png" alt="">
+            <div class="content">
+                <h3>Annapoorneshwari Temple</h3>
+                <p>Known for the revered Annapoorneeshwari Temple, Horanadu is a holy Hindu town located in Malnad, Karnataka.</p>
+               
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/basava.png" alt="">
+            <div class="content">
+                <h3>Basaveshwara statue</h3>
+                <p>The 111-foot statue of Basaveshwara, located in Bhishma Lake, Gadag district, Karnataka, is the tallest statue of Basavanna in India, standing in the middle of a 103-acre tank.</p>
+               
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/glass.png" alt="">
+            <div class="content">
+                <h3>Glass House</h3>
+                <p>Davanagere Glass House in the botanical garden of the city, Karnataka, India. This is supposed to be the 2nd largest in Asia (to be verified).</p>
+                
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/shiva.png" alt="">
+            <div class="content">
+                <h3>Omkareshwar Temple</h3>
+                <p>This temple hosts 12 representatives of the original jyotirlingas spread across various states of India. The temple is located in Omkar Ashram,Omkar hills.</p>
+                
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/tum.png" alt="">
+            <div class="content">
+                <h3>Mandaragiri Hills</h3>
+                <p>Mandaragiri Hills in Tumkur, Karnataka, India is home to a Jain temple that resembles a bunch of peacock feathers</p>
+               
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/oo.png" alt="">
+            <div class="content">
+                <h3>Suvarna Vidhana Soudha</h3>
+                <p>Belgaum hosted the 39th Indian National Congress session in 1924 and was a key British military base due to its proximity to Goa.</p>
+                
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/koti.jpg" alt="">
+            <div class="content">
+                <h3>Kotilingeshwara Temple</h3>
+                <p>The Kotilingeshwara Temple, located in the Kolar district of Karnataka, is renowned for its staggering collection of over 10 million Shiva lingas, making it a prominent spiritual and cultural landmark.</p>
+                
+            </div>
+        </div>
+        <div class="box">
+            <img src="images/male.jpg" alt="">
+            <div class="content">
+                <h3>Male Mahadeshwara Hills</h3>
+                <p>Male Mahadeshwara Hills in Chamarajanagar district is spiritual and scenic destination with an ancient Lord Mahadeshwara temple and rich wildlife.</p>  </div>
+        </div>
+
+    </div>
+
+</section>
+
+<h1 class="heading">
+    <span>r</span>
+    <span>e</span>
+    <span>v</span>
+    <span>i</span>
+    <span>e</span>
+    <span>w</span>
+</h1>
+
+<section id="review">
+   
+    <div class="form-container">
+        <div class="form-left">
+            <img src="images/r.png" alt="Review Image">
+        </div>
+
+        <div class="form-right">
+            <h3>Submit Your Review</h3>
+            <form id="reviewForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+                <label for="experience">Experience:</label>
+                <textarea id="experience" name="experience" placeholder="Share your experience" required></textarea>
+
+                <label for="rating">Rating:</label>
+                <select id="rating" name="rating" required>
+                    <option value="" disabled selected>Select a rating</option>
+                    <option value="1">1 - Poor</option>
+                    <option value="2">2 - Fair</option>
+                    <option value="3">3 - Good</option>
+                    <option value="4">4 - Very Good</option>
+                    <option value="5">5 - Excellent</option>
+                </select>
+
+                <button type="submit">Submit Review</button>
+            </form>
+
+           
+            <div id="successMessage" style="display: none; text-align: center; margin-top: 15px; font-size: 18px; color: #4caf50;">
+                Thank you for your valuable review!
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+<section id="reviews-carousel-section">
+    <h2>Customer Reviews</h2>
+    <div class="swiper-container review-slider">
+        <div class="swiper-wrapper" id="reviewContainer">
+            <!-- Approved reviews will be dynamically inserted here -->
+        </div>
+    </div>
+</section>
+
+
+<script src="path/to/swiper.js"></script>
+<script>
+
+    document.getElementById('reviewForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const experience = document.getElementById('experience').value.trim();
+        const rating = document.getElementById('rating').value;
+
+        if (!name ||!email|| !experience || !rating) {
+            alert("All fields are required.");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/submit-review', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name,email, experience, rating })
+            });
+
+            if (response.ok) {
+                document.getElementById('reviewForm').reset();
+                document.getElementById('successMessage').style.display = 'block';
+            } else {
+                alert('Failed to submit review.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error submitting review.');
+        }
+    });
+
+
+    async function fetchReviewsForAdmin() {
+        try {
+            const response = await fetch('/admin/reviews'); 
+            const reviews = await response.json();
+
+            const reviewList = document.getElementById('admin-review-list');
+            reviewList.innerHTML = ''; 
+
+            reviews.forEach(review => {
+                const reviewDiv = document.createElement('div');
+                reviewDiv.classList.add('review-box');
+                reviewDiv.innerHTML = `
+                    <p><strong>${review.name}</strong>: ${review.experience}</p>
+                    <p>Rating: ${renderStars(review.rating)}</p>
+                    <button onclick="approveReview('${review._id}')">Approve</button>
+                `;
+                reviewList.appendChild(reviewDiv);
+            });
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+        }
+    }
+
+
+    async function approveReview(reviewId) {
+        try {
+            const response = await fetch(`/admin/approve-review/${reviewId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (response.ok) {
+                alert('Review approved');
+                fetchReviewsForAdmin(); // Re-fetch the list after approval
+            }
+        } catch (error) {
+            console.error('Error approving review:', error);
+        }
+    }
+
+   
+    function renderStars(rating) {
+        const stars = [];
+        for (let i = 0; i < 5; i++) {
+            stars.push(i < rating ? '★' : '☆');
+        }
+        return stars.join(' ');
+    }
+
+  
+    window.onload = fetchReviewsForAdmin;
+</script>
+
+
+<section class="contact" id="contact">
+    <h1 class="heading">
+        <span>c</span>
+        <span>o</span>
+        <span>n</span>
+        <span>t</span>
+        <span>a</span>
+        <span>c</span>
+        <span>t</span>
+    </h1>
+
+    <div class="row">
+        <div class="image">
+            <img src="images/contact-img.svg" alt="Contact Image">
+        </div>
+
+        <form id="contact-form" action="http://localhost:5000/submit-form" method="POST">
+            <div class="inputBox">
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+            </div>
+            <div class="inputBox">
+                <input type="number" name="number" placeholder="Number" required>
+                <input type="text" name="subject" placeholder="Subject" required>
+            </div>
+            <textarea name="message" placeholder="Message" cols="30" rows="10" required></textarea>
+            <input type="submit" class="btn" value="Send Message">
+            <p id="form-message"></p>
+        </form>
+    </div>
+</section>
+
+
+
+<section class="brand-container">
+
+    <div class="swiper-container brand-slider">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="images/1.jpg" alt=""></div>
+            <div class="swiper-slide"><img src="images/2.jpg" alt=""></div>
+            <div class="swiper-slide"><img src="images/3.jpg" alt=""></div>
+            <div class="swiper-slide"><img src="images/4.jpg" alt=""></div>
+            <div class="swiper-slide"><img src="images/5.jpg" alt=""></div>
+            <div class="swiper-slide"><img src="images/6.jpg" alt=""></div>
+        </div>
+    </div>
+
+</section>
+
+
+
+    
+
+
+
+
+<section class="footer">
+
+    <div class="box-container">
+
+        <div class="box">
+            <h3>about us</h3>
+            <p>Welcome to our Karnataka Travel Guide! We are passionate about showcasing the diverse beauty and rich culture of Karnataka. Whether you're seeking the tranquil landscapes of Coorg, the historical wonders of Hampi, or the vibrant city life of Bangalore, our platform offers expert insights, detailed itineraries, and helpful tips for every traveler. Our goal is to help you explore the best of Karnataka, from its scenic beauty to its heritage, and create unforgettable travel experiences. Join us in discovering the heart of South India!</p>
+        </div><br><br><br><br><br><br>
+      
+        
+        <div class="box">
+            <h3>Quick links</h3>
+            <a href="#home">home</a>
+           <a href="#packages">Destinations</a>
+            <a href="#gallery">Discoveries</a>
+          
+            <a href="#review">review</a> 
+            <a href="#contact">contact</a>
+        </div>
+        <div class="box">
+            <h3>follow us</h3>
+            <a href="https://www.facebook.com/FreeWebsiteCode/">facebook</a>
+            <a href="https://twitter.com/freewebsitecode">twitter</a>
+            <a href="https://www.linkedin.com/in/freewebsitecode/">linkedin</a>
+            <a href="https://www.youtube.com/FreeWebsiteCode/videos">youtube</a>
+        </div>
+
+    </div>
+
+   
+</section>
+
+
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+
+<script src="script.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+
+</body>
+</html>

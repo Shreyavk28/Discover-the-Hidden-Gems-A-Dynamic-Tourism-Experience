@@ -1,0 +1,147 @@
+<html>
+
+<body>
+<!-- Favorites Page (favorites.html) -->
+<div id="favorites-menu" class="fav-menu">
+    <h2>Your Favorites</h2>
+    <div id="favorite-list"></div> <!-- This will be dynamically populated -->
+
+     <!-- Go Back Button -->
+     <button onclick="goBack()">Go Back</button>
+</div>
+<style>
+    .fav-menu {
+           max-width: 100%; /* Adjusted width to accommodate multiple items in a row */
+           margin: 0 auto;
+           padding: 20px;
+           background-color: #ffffff;
+           border: 1px solid #ddd;
+           border-radius: 8px;
+           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+       }
+
+       #favorite-list {
+           display: flex;
+           flex-wrap: wrap;
+           gap: 20px;
+           justify-content: space-between;
+       }
+
+       #favorite-list > div {
+           flex: 1 1 calc(50% - 20px); 
+           /* flex: 1 1 calc(33.33% - 20px);  */
+           margin-bottom: 20px;
+           padding: 15px;
+           border: 1px solid #ddd;
+           border-radius: 8px;
+           background-color: #fefefe;
+           position: relative;
+           box-sizing: border-box;
+           min-height: 200px; /* Ensure consistent height */
+       }
+
+
+#favorite-list > div > .remove-btn {
+           margin-bottom: 10px; /* Add space between package content and button */
+       }
+
+.remove-btn {
+           display: inline-block;
+           padding: 8px 12px;
+           margin-top: 10px;
+           background-color: #e74c3c;
+           color: #fff;
+           border: none;
+           border-radius: 4px;
+           cursor: pointer;
+           font-size: 14px;
+           width: 80px;
+       }
+
+       .remove-btn:hover {
+           background-color: #c0392b;
+       }
+       /* Styling for Go Back button */
+       button {
+           display: block;
+           width: 100%;
+           max-width: 200px;
+           margin: 20px auto 0;
+           padding: 10px;
+           background-color: #3498db;
+           color: #fff;
+           border: none;
+           border-radius: 4px;
+           font-size: 16px;
+           cursor: pointer;
+           text-align: center;
+       }
+
+       button:hover {
+           background-color: #2980b9;
+       }
+</style>
+
+<script>
+
+
+
+// Function to open and display favorites (from localStorage)
+function openFavorites() {
+    const favoriteList = document.getElementById('favorite-list');
+    favoriteList.innerHTML = ''; // Clear the list before rendering
+
+    // Get favorites from localStorage
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+    // Display full package HTML for each favorite
+    favorites.forEach((favoriteHTML, index) => {
+        const div = document.createElement('div');
+        div.innerHTML = favoriteHTML; // Insert the stored HTML (full package)
+        
+        // Add a "Remove" button to each favorite package div
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'Remove';
+        removeButton.classList.add('remove-btn');
+        
+        // Add click event to remove the favorite package when clicked
+        removeButton.addEventListener('click', function() {
+            removeFavorite(index, div); // Pass the index and div to remove
+        });
+
+        // Append the remove button to the package div
+        div.appendChild(removeButton);
+        
+        // Append the package div to the favorites list
+        favoriteList.appendChild(div);
+    });
+}
+
+// Function to remove a favorite package
+function removeFavorite(index, packageDiv) {
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+    // Remove the favorite package from the list
+    favorites.splice(index, 1);
+
+    // Update localStorage with the new list
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+
+    // Remove the package div from the page
+    packageDiv.remove();
+}
+
+// Open the favorites list when the page loads
+document.addEventListener('DOMContentLoaded', openFavorites);
+
+// Function to go back to the previous page
+function goBack() {
+    window.history.back();
+}
+
+</script>
+
+
+
+</body>
+</html>

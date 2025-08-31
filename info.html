@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover More - Gallery</title>
+    <style>
+        /* Global styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: white;
+            color: black;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            text-align: left;
+            flex-direction: column;
+        }
+
+        /* Title of the page */
+        h1.page-title {
+            font-size: 2.5rem;
+            color: #ff6600;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Back button styles */
+        a.btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #ff6600;
+            color: #fff;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: .5rem;
+            transition: 0.3s ease;
+            margin-top: 20px;
+        }
+
+        a.btn:hover {
+            background: #fff;
+            color: #ff6600;
+            transform: scale(1.05);
+        }
+
+        /* Gallery section styles */
+        .gallery-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: flex-start;
+            max-width: 1200px;
+            margin: 20px;
+        }
+
+        /* Gallery item styling (image left, title and description on the right) */
+        /* .gallery-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px; 
+            margin-bottom: 20px;
+        }
+
+        .gallery-item img {
+            width: 250px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .gallery-item .right-side {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .gallery-item .title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff6600;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .gallery-item .description {
+            font-size: 1.2rem;
+            color:black
+        }
+
+        .gallery-item p {
+            font-size: 1.2rem;
+            color: #666;
+        } */
+
+
+
+
+
+
+
+/* Container for each gallery item */
+.gallery-item {
+    display: flex; /* Align image and content side by side */
+    align-items: flex-start; /* Align content to the top */
+    gap: 20px; /* Space between image and right-side content */
+    margin-bottom: 20px; /* Space between gallery items */
+}
+
+/* Styling for the image container */
+.gallery-item img {
+    /* position: absolute; */
+    width: 350px; /* Fixed width for consistency */
+    height: 250px; /* Fixed height for consistency */
+    object-fit: cover; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+    border: 1px solid #ddd; /* Optional: Light border around the image */
+}
+
+/* Styling for the content container (right-side) */
+.gallery-item .right-side {
+    display: flex; /* Use flexbox for vertical alignment */
+    flex-direction: column; /* Stack content vertically */
+    justify-content: flex-start; /* Align items to the top */
+    gap: 3px; /* Space between title and description */
+     max-width:100% ;  
+}
+
+/* Title styling */
+.gallery-item .right-side .title {
+    font-size: 1.5rem; /* Make title prominent */
+    font-weight: bold; /* Bold font for emphasis */
+    color: #ff6600; 
+    margin: 0; 
+    text-align: left; /* Align text to the left */
+}
+
+/* Description styling */
+.gallery-item .right-side .description {
+    font-size: 1.2rem; /* Standard readable font size */
+    color:black; /* Light gray for a subtle look */
+    line-height: 1.6; /* Improve readability with proper spacing */
+    text-align: justify;
+}
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Page title -->
+    <h1 class="page-title">Gallery of Adventures</h1>
+
+    <!-- Gallery Section (Images and Descriptions with titles) -->
+    <div class="gallery-section" id="gallery-section"></div>
+
+    <!-- Back Button -->
+    <a href="index.html" class="btn">Go Back</a>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            // Get the query string value for "video"
+            const urlParams = new URLSearchParams(window.location.search);
+            const videoId = parseInt(urlParams.get('video'), 10); // Convert to integer
+
+            // Content and images for each video
+            const videoContent = [
+                { 
+                    title: "Handicrafts of Karnataka", 
+                    // description: "Explore the wilderness. A thrilling adventure awaits you in the mountains.", 
+                    gallery: [
+                        { title: "Channapatna Lacquerware", src: "images/channa.jpeg", desc: "locally called as gombegala ooru (the town of toys). Every day, over 3000 local craftsmen produce colourful lacquerware including wooden toys, games, puzzles, jewellery, coasters, napkin rings, powder boxes etc. This vegetable-dyed lacquerware has also been awarded the geographical indication (GI) by the World Trade Organization. For the 2015 Republic Day parade, the Karnataka tableau featured Channapatna handicrafts and won the third prize.The craft traces its origins to the reign of Tipu Sultan invited Persian artisans to teach the local community.Channapatna toys are celebrated for their eco-friendly appeal and are cherished as timeless souvenirs." },
+                        { title: "Kinhal Wood Carving", src: "images/kinhal.jpg", desc: "Kinhal wood carving is the lacquerware woodcraft that takes its name from a small town in Koppal district. The craft was highly patronized by the Vijayanagara kings. Using a paste of tamarind seeds and pebbles to stick carved parts of wood. A mixture of pebble powder and liquid gum is then used to sculpt ornaments and jewellery on these figures. The breathtaking designs of the Kinhal art can be easily differentiated from other forms of art by its vibrant colours and intricate designs. it given the Geographical Indication (GI) tag by the World Trade Organisation." },
+                        { title: "Rosewood Carving", src: "images/rose.jpg", desc: "The ancient craft of rosewood carving is known for its elaborate rosewood inlay work. The art has been practiced in Mysore for centuries and is said to have enjoyed the patronage of the Mysore Maharajas. Artisans meticulously even out the wood and prepare it for etching the designs. The heavy timber that rosewood is, it’s used extensively in furniture, cabinetry and architectural woodwork as well.The final products, from decorative panels to exquisite furniture, are highly sought after for their elegance and timeless appeal." },
+                        { title: "Sandalwood Carving", src: "images/sandalwood.jpg", desc: "Undoubtedly one of the most exquisite arts associated with Karnataka, sandalwood carving has an illustrious thousand year history. Elegantly carved and scented sandalwood figurines, tables, boxes, caskets, stationary and even furniture have found devotees around the world. The Gudigar families of Shimoga, Uttara Kannada and Mysore specialize in this craft.The carvings often depict mythological themes, gods, and goddesses, reflecting India's rich cultural heritage.These masterpieces are not only prized for their artistic brilliance but also for the soothing fragrance of sandalwood, making them truly unique creations. " },
+                        { title: "Ilkal Sarees", src: "images/ilkal.jpg", desc: "The Ilkal sarees take its name from a quaint little village in Bagalkot district and it also has the prestigious Geographical Indication (GI) tag. These sarees are famous around the world for their unique weaving method – cotton for the body, art silk for border, and art silk again for the pallav, which are then joined together with a series of loops. The patrons of these handmade sarees include celebrities and political figures.The vibrant colors and intricate patterns of Ilkal sarees make them a symbol of tradition and elegance, treasured by saree enthusiasts globally." },
+                        { title: "Banjara Handicrafts", src: "images/banjara.jpg", desc: "The semi-nomadic tribes of Banjara are regarded as the patrons of this craft. The women make vivid patch work quilts abound in geometric patterns. About three to six layers of reused fabric are held together by running stitches. Silver, brass, gold, ivory, animal bone, mirrors and even plastic are transformed as embellishments on these garments. They are mainly found in the districts of Bellary, Bijapur, Raichur, Gulbarga and Belgaum.These intricate textiles not only serve as functional items but also reflect the rich cultural heritage and vibrant lifestyle of the Banjara community." }
+                    ]
+
+                },
+                { 
+                    title: "The Wild", 
+                    // description: "Relax by the beach. Discover serene landscapes and peaceful surroundings.", 
+                    gallery: [
+                        { title: "Ranganathittu Bird Sanctuary", src: "images/Ranganathittu.jpg", desc: "Ranganathittu Bird Sanctuary, located near Srirangapatna in Karnataka, is a haven for bird lovers and nature enthusiasts. Spread across a cluster of small islands on the Kaveri River, it is home to a diverse range of migratory and resident bird species. Visitors can spot painted storks, open-billed storks, pelicans, herons, and many more, making it a prime bird-watching destination. The sanctuary's serene environment, lush greenery, and boat rides offer a tranquil escape and a chance to witness wildlife up close. Ranganathittu is also known for its ecological significance, playing a vital role in conserving avian biodiversity." },
+                        { title: "Bannerghatta National Park", src: "images/bannergatta.jpeg", desc: "Bannerghatta National Park, located near Bengaluru, Karnataka, is a sprawling wildlife sanctuary known for its rich biodiversity and scenic landscapes. Spanning over 25,000 acres, it is home to a variety of flora and fauna, including elephants, leopards, deer, and numerous bird species. The park features a safari experience, offering visitors a chance to observe animals like lions, tigers, and bears in their natural habitat.In addition to the safari, the park houses a butterfly park, a zoo, and rescue centers for wildlife conservation. Its proximity to the city makes it a popular destination for nature enthusiasts and families seeking a blend of education and adventure.s" },
+                        { "title": "Kabini Wildlife Sanctuary", "src": "images/kabini.jpg", "desc": "Kabini Wildlife Sanctuary, located in the Nagarhole region of Karnataka, is a treasure trove of biodiversity, known for its rich greenery and abundant wildlife. The sanctuary is renowned for frequent tiger sightings, alongside leopards, elephants, and a variety of bird species. The Kabini River enhances its beauty, offering serene river cruises that allow close encounters with nature. Visitors can experience thrilling jeep safaris, guided nature walks, and unparalleled wildlife photography opportunities. The lush forests and peaceful environment make it a prime destination for eco-tourism and adventure. Kabini’s seamless blend of natural beauty and thrilling experiences attracts visitors year-round."},
+                        { title: "Bhadra Wildlife Sanctuary and Tiger Reserve", src: "images/badra.jpg", desc: "Bhadra Wildlife Sanctuary and Tiger Reserve, nestled in the Western Ghats of Karnataka, is a paradise for wildlife enthusiasts and nature lovers. Spanning over 490 square kilometers, the sanctuary is renowned for its dense forests, rolling hills, and pristine water bodies. It is part of Project Tiger and is home to a significant population of Bengal tigers, along with leopards, elephants, sloth bears, and a variety of deer species.The sanctuary also boasts over 250 species of birds, making it a delight for birdwatchers. Activities like jeep safaris, trekking, and river cruises offer visitors an immersive experience in the wilderness." },
+                        { "title": "Anshi National Park", "src": "images/anshi.webp", "desc": "Anshi National Park, part of the Kali Tiger Reserve in Uttara Kannada, Karnataka, is a haven of ecological diversity and unspoiled natural beauty. Spanning 340 square kilometers, the park hosts a variety of wildlife, including tigers, leopards, elephants, and exotic bird species. Its dense forests and rugged terrain create a thrilling experience for adventure enthusiasts. Activities such as jungle safaris, river rafting, and trekking offer unique ways to explore the park’s beauty. The untouched landscape and rich biodiversity make it a vital conservation area. Visitors are captivated by its tranquil ambiance, making it a must-visit for nature enthusiasts."},
+                        { title: "Daroji Sloth Bear Sanctuary", src: "images/bear.avif", desc: "Daroji Sloth Bear Sanctuary, located in the Bellary district of Karnataka, is India's first dedicated sanctuary for sloth bears. Spanning over 82 square kilometers, it provides a safe habitat for these shy and nocturnal creatures. The sanctuary's rocky terrain, interspersed with scrub forests and boulders, is ideal for sloth bears and supports a variety of other wildlife, including leopards, jackals, wild boars, and a diverse array of bird species.Visitors can observe sloth bears in their natural habitat from strategically placed watchtowers, especially during feeding times." },
+                        {  "title": "Sharavathi Valley Wildlife Sanctuary", "src": "images/shara.avif", "desc": "Sharavathi Valley Wildlife Sanctuary, located in the serene Shimoga district of Karnataka, is an ecological treasure trove. The sanctuary encompasses the iconic Sharavathi River and the majestic Jog Falls, creating stunning vistas for visitors. Rich in wildlife, it is home to tigers, leopards, and vibrant hornbills, offering an exceptional experience for wildlife lovers. Trekking, birdwatching, and nature trails are popular activities, allowing visitors to immerse themselves in the lush landscapes. The sanctuary’s dense forests and tranquil environment provide a peaceful retreat for those seeking solace in nature. Its unique biodiversity and scenic beauty make it an unforgettable destination."}
+                    ]
+                },
+                { 
+                    title: "Culture of Karnataka", 
+                    // description: "Dive into the rich culture of Karnataka. From ancient traditions to vibrant festivals, experience the cultural diversity that this state has to offer.",
+                    gallery: [
+                        { title: "Dollu Kunitha", src: "images/dollu.jpg", desc: "Dollu Kunitha is a traditional drum dance native to Karnataka, primarily performed by the men of the Kuruba Gowda community. It is characterized by vigorous and rhythmic drumbeats played on large, two-sided drums called Dollu. The performers, adorned in traditional attire with bright colors, beads, and anklets, create captivating patterns and synchronize their movements with the drum's beats.It is often performed during festivals, weddings, and temple celebrations, showcasing both physical strength and coordination, while symbolizing the spirit of unity and cultural pride within the community." },
+                        { title: "Veeragase", src: "images/vergase.jpg", desc: "Veeragase is a traditional folk dance form from Karnataka, deeply rooted in the state's cultural and religious practices. The dance is often performed in honor of Lord Shiva, particularly during the Shivaratri festival or other religious celebrations. It is primarily performed by men, who wear vibrant costumes and unique accessories, including elaborate headgear, waistbands, and jewelry. The dancers are also known to wear wooden ornaments that produce rhythmic sounds during the performance.Veeragase is known for its intense energy, with performers executing rapid footwork, vigorous body movements, and dramatic expressions, embodying devotion and valor in the process. " },
+                        { title: "Gombe Dance", src: "images/gombee.jpg", desc: "Gombe Dance is a unique and colorful folk dance form from Karnataka, known for its theatrical and visual appeal. The name 'Gombe' translates to 'doll' in Kannada, and the performance often features dancers dressed as life-sized dolls or characters from mythology and folklore. This dance is commonly performed during festivals, temple fairs, and cultural events.It is characterized by its lively movements, vibrant costumes, and intricate storytelling, often accompanied by folk music and rhythmic beats, creating an engaging and festive atmosphere." },
+                        { title: "Yakshagana", "src": "images/yaksh.jpg", "desc": "Yakshagana is a traditional theater art form from Karnataka that combines dance, music, dialogue, and elaborate costumes, creating a vibrant visual spectacle. It involves intricate storytelling, with actors portraying characters from Hindu epics like the Mahabharata and Ramayana. The performances are marked by expressive face makeup and dramatic costumes, adding to the theatrical intensity. Yakshagana is an essential part of the cultural heritage of coastal Karnataka and is performed during temple festivals, fairs, and other cultural celebrations." },
+                        {title:"Chowdike",src:"images/chowdike.jpg",desc:"Chowdike is a dance form performed in parts of North Karnataka, especially in the Haveri and Dharwad districts. It is a vibrant, energetic dance performed during local festivals and religious occasions. The dancers, mostly men, wear bright attire and use decorative masks representing deities and mythological figures. The performance involves a mix of dance and drama, often accompanied by devotional songs, and serves as both a cultural and spiritual expression of the community.It  is known for its lively and captivating movements, with performers showcasing their agility and strength while narrating mythological stories through expressive gestures and synchronized steps."},
+                        {title:"Kamsale",src:"images/kamsale.jpg",desc:"Kamsale is a traditional folk dance performed by the male devotees of the Kamsale community, primarily in the Mysuru and Channarayapatna regions of Karnataka. The dance involves rhythmic movements, foot stamping, and the use of cymbals (called Kamsale) to create an intense, melodic atmosphere. The dancers typically wear a unique costume, including a crown, and perform synchronized movements during religious festivals and processions, particularly dedicated to Lord Shiva and Bhadrakali.Kamsale features rhythmic cymbal clanging, enhancing the spiritual atmosphere and symbolizing the devotion and energy of the performers."},
+                        
+
+                    ]
+                },
+                { 
+                    title: "Cultural Festivities of the Region", 
+                    // description: "Explore urban cities. Discover the pulse of city life and vibrant culture.", 
+                    gallery: [
+                        
+                            { title: "Dasara", src: "images/dasara.jpg", desc:" Dasara is a grand festival celebrated in Mysuru, marking the victory of good over evil, featuring a royal procession with decorated elephants, cultural performances, and religious rituals, drawing thousands of visitors to witness the vibrant celebrations dedicated to Goddess Chamundeshwari. The festival also includes traditional music, dance, and a variety of local exhibitions, making it a major cultural event in the region. The grandeur of the Mysuru Palace, illuminated with thousands of lights, adds to the spectacular atmosphere of the festival.  "},
+                        { title: "Ugadi", src: "images/ugadi.jpeg", desc: "Ugadi marks the New Year, celebrated with joy and enthusiasm across the region, heralding the arrival of spring. It involves rituals such as prayers, the preparation of Panchanga, and a festive feast with traditional sweets. Homes are decorated with flowers, rangolis, and mango leaves to symbolize freshness and new beginnings. The day is also filled with cultural performances, folk songs, and family gatherings, reinforcing a sense of unity, renewal, and prosperity. This festive occasion is considered an ideal time to start new ventures and seek blessings for success and happiness in the coming year. People also reflect on the past year, expressing gratitude and hopes for a brighter future ahead." },
+                        { title: "Karaga", src: "images/karaga.webp", desc: "Karaga is a vibrant and ancient festival celebrated in Bangalore, dedicated to the worship of Goddess Draupadi. The festival involves a grand procession where a ceremonial pot, or 'Karaga,' is carried on the head by a dancer, symbolizing the goddess’s presence. The participants, dressed in traditional attire, perform intricate rituals and dances, accompanied by traditional drumming and chanting. The procession moves through the streets, attracting large crowds of devotees and onlookers. This celebration also honors the cultural traditions of the local community, bringing people together in devotion and festivity" },
+                        { title: "Ganesha Chaturthi", src: "images/ganesha.jpg", desc: "Ganesha Chaturthi is a widely celebrated festival honoring Lord Ganesha, marked by the installation of his idols in homes and public places. The festivities involve prayers, rituals, and the chanting of mantras to seek blessings for prosperity and success. Devotees offer sweets, especially **modaks**, and participate in grand processions with music and dance before immersing the idols in water. The festival is a joyous occasion that fosters community spirit, unity, and devotion. It is one of the most significant and lively celebrations in many parts of the region, attracting thousands of devotees each year." },
+                        { "title": "Kambala", "src": "images/dd3.png", "desc": "Kambala is a traditional buffalo race celebrated in the coastal regions, especially in Udupi and Dakshina Kannada. The race involves pairs of buffaloes driven through a muddy track by skilled farmers, who run alongside the animals while controlling them. The event is accompanied by vibrant celebrations, traditional music, and dances, creating a festive atmosphere. Kambala is held during the harvest season and honors the farming community, symbolizing strength, skill, and the bond between humans and animals. The festival also serves as a cultural spectacle, attracting large crowds and fostering community spirit and local pride."},
+                        {  "title": "Baisakhi", "src": "images/bisaki.jpeg", "desc": "Baisakhi is a significant harvest festival celebrated in various parts of India, especially in Punjab, Haryana, and parts of Uttar Pradesh, marking the beginning of the new harvest season. In Karnataka, it is particularly celebrated in regions of North Karnataka such as Belagavi, Bagalkot, Haveri, Chitradurga, and Raichur, where the farming community comes together for prayers, rituals, and cultural performances. The festival holds religious significance, especially for Sikhs, as it commemorates the formation of the Khalsa in 1699. Families gather to celebrate with festive meals, and the community gives thanks for the harvest and seeks blessings for prosperity. Baisakhi is a joyous occasion that symbolizes renewal, harvest, and cultural unity."},
+                        { "title": "Makara Sankranti", "src": "images/sankranthi.jpg", "desc": "Makara Sankranti is a widely celebrated festival marking the transition of the sun into the zodiac sign of Capricorn, signaling the end of winter and the arrival of warmer days. In Karnataka, the festival is known for its vibrant festivities, including kite flying, bonfires, and traditional rituals. The day is marked by the preparation and sharing of sweets like **tilgul** (sesame and jaggery) and **chakkali**. Devotees visit temples, offer prayers, and perform rituals to seek blessings for health and prosperity. The festival is celebrated with much enthusiasm, especially in rural areas, where it signifies the harvest season. It is also a time for family gatherings and community celebrations, strengthening bonds and traditions."}
+
+
+
+                    ]
+                },
+                { 
+                    title: "Blue Horizon Ventures", 
+                
+                    gallery: [
+                    { "title": "Gokarna Beach", "src": "images/gokarna.png", "desc": "Gokarna Beach, located in the coastal town of Gokarna, is known for its serene beauty and spiritual significance. It attracts both devotees and tourists, offering a peaceful atmosphere ideal for relaxation and reflection. The beach is surrounded by hills and coconut groves, providing stunning views of the Arabian Sea. The town is also home to the famous Om Beach and several temples dedicated to Lord Shiva. Gokarna Beach is a perfect destination for yoga, meditation, and enjoying the tranquil waters. The scenic landscape and vibrant local culture make it a must-visit for nature lovers and spiritual seekers alike."},
+  { "title": "Shivanasamudra Falls", "src": "images/shivan.jpg", "desc": "Shivanasamudra Falls, located in the Mandya district of Karnataka, is a breathtaking cascade formed by the Kaveri River as it splits into two streams, Gaganachukki and Bharachukki. These falls are surrounded by lush forests and rocky terrain, offering a stunning natural setting. The monsoon season enhances the grandeur of the falls, attracting numerous visitors. Shivanasamudra is also home to one of the first hydroelectric power stations in Asia. The area is ideal for photography and nature exploration, providing a tranquil escape from urban life. The falls are a blend of natural beauty and historical significance, making them a popular tourist attraction."},
+  { "title": "Cauvery River", "src": "images/kaveri.avif", "desc": "The Cauvery River, one of the major rivers in southern India, flows through Karnataka, providing water for agriculture and sustenance. It is considered sacred by Hindus, with several temples and pilgrimage sites situated along its banks, such as the famous Talakaveri. The river is known for its scenic beauty, with lush landscapes and tranquil ghats. It also supports several wildlife sanctuaries, making it an important ecological resource. The Cauvery River plays a crucial role in the cultural and spiritual life of the region. The river is celebrated during festivals like **Cauvery Sankramana**, drawing devotees and visitors to its banks."},
+  { "title": "Tungabhadra River", "src": "images/tunga.jpg",  "desc": "The Tungabhadra River, formed by the confluence of the Tunga and Bhadra rivers, flows through the central part of Karnataka. It is a vital water source for irrigation and provides water to many towns and villages. The river is deeply connected to the region's history, with ancient temples and ruins situated along its banks, including the famous Hampi ruins. The Tungabhadra River is known for its scenic beauty, with lush landscapes and wildlife. It is also an important site for religious rituals and pilgrimage, particularly at places like **Tungabhadra Dam** and **Hampi**. The river offers a peaceful retreat for nature lovers and history enthusiasts."},
+  { "title": "Malpe Beach", "src": "images/malpe.jpg", "desc": "Malpe Beach, located along the western coast of Karnataka, is a pristine and less-explored beach known for its natural beauty and tranquility. The beach is surrounded by lush greenery and offers stunning views of the Arabian Sea. It is an ideal destination for those seeking peace, away from the hustle and bustle of more popular beaches. Maple Beach is known for its clear waters, golden sands, and picturesque sunsets, making it a perfect spot for photography and beach activities. It is also a great place for a relaxing retreat and to enjoy the serene environment. The beach is gradually gaining popularity among nature lovers and peace seekers."},
+  { "title": "Unchalli Falls", "src": "images/unchalli.webp",  "desc": "Unchalli Falls, located near Sirsi in the Uttara Kannada district of Karnataka, is a spectacular waterfall cascading from a height of about 116 meters. Also known as Lushington Falls, it is formed by the Aghanashini River amidst dense forests. The trek to the falls offers a thrilling experience, with scenic views and a close encounter with nature. The roaring sound of the water and the mist-filled surroundings create a magical ambiance. Unchalli Falls is a haven for adventure seekers and photographers. The untouched beauty of this hidden gem makes it a must-visit destination for those looking to escape into nature."},
+  { "title": "Sharavathi River", "src": "images/sharavathi.jpg", "desc": "The Sharavathi River flows through the Western Ghats in Karnataka, offering picturesque landscapes and vibrant wildlife along its course. The river is famous for the **Jog Falls**, one of the highest waterfalls in India, located at its basin. Sharavathi River is an important water source for the region, providing irrigation to many agricultural areas. The river is surrounded by lush forests, making it a haven for nature lovers and wildlife enthusiasts. It is also an important site for spiritual activities, with several temples located along its banks. The river plays a key role in the ecological and cultural heritage of the region."},
+  { "title": "Bhatkal Beach", "src": "images/batkal.jpg", "desc": "Bhatkal Beach, located in the town of Bhatkal on the western coast of Karnataka, is known for its serene ambiance and scenic views. The beach is surrounded by palm trees and offers clear blue waters, making it an ideal spot for relaxation and water activities. Bhatkal Beach is less crowded compared to other popular beaches, allowing visitors to enjoy a peaceful retreat. The town of Bhatkal is also home to historical sites, including ancient temples and forts. The beach is perfect for swimming, picnics, and long walks, offering a tranquil escape. Bhatkal Beach is an emerging destination for nature lovers and those seeking a quiet getaway."}
+
+                    ]
+                }
+            ];
+
+            // Display the correct content based on videoId
+            if (videoId >= 1 && videoId <= 5) {
+                const content = videoContent[videoId - 1];
+
+                // Update the page title dynamically
+                document.title = content.title;
+
+                // Update the <h1> tag dynamically
+                document.querySelector('.page-title').textContent = content.title;
+
+                // Populate the gallery section with images and descriptions
+                const gallerySection = document.getElementById("gallery-section");
+                gallerySection.innerHTML = ''; // Clear any previous content
+
+                content.gallery.forEach(item => {
+                    const galleryItem = document.createElement("div");
+                    galleryItem.classList.add("gallery-item");
+
+                    // Image element
+                    const imgElement = document.createElement("img");
+                    imgElement.src = item.src;
+
+                    // Right side for title and description
+                    const rightSide = document.createElement("div");
+                    rightSide.classList.add("right-side");
+
+                    // Title element
+                    const title = document.createElement("div");
+                    title.classList.add("title");
+                    title.textContent = item.title;
+
+                    // Description element
+                    const descriptionDiv = document.createElement("div");
+                    descriptionDiv.classList.add("description");
+
+                    // Description text
+                    const descText = document.createElement("p");
+                    descText.textContent = item.desc;
+
+                    descriptionDiv.appendChild(descText);
+
+                    // Append the image and title/description to the gallery item
+                    galleryItem.appendChild(imgElement);  // Image on the left
+                    rightSide.appendChild(title);        // Title on the right
+                    rightSide.appendChild(descriptionDiv); // Description below the title
+                    galleryItem.appendChild(rightSide);
+
+                    gallerySection.appendChild(galleryItem);
+                });
+            } else {
+                const gallerySection = document.getElementById("gallery-section");
+                gallerySection.innerHTML = "<p>No gallery content available.</p>"; // No content available
+            }
+        });
+    </script>
+
+</body>
+</html>
+
+
+
