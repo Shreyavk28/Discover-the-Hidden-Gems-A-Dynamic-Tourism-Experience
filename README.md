@@ -39,10 +39,12 @@ This project showcases beautiful destinations with images, videos, and responsiv
      ```
 ---
 ## 📸 Screenshots
-(Add screenshots of your project here for better presentation)
+### 🔐 Dashboard
+![Dashboard Page](./frontend/screenshots/Dashboard.png)  
 
 ---
 ## 📂 Project Structure
+```plaintext
 Travel/
 │-- images/ # All images & videos used in the project
 │-- css/ # Stylesheets
