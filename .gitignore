@@ -5,6 +5,27 @@ node_modules/
 .env
 
 # Logs
-npm-debug.log
-yarn-debug.log
-yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output (if you have a dist or build folder for the extension)
+dist/
+build/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Coverage reports
+coverage/
+
+# Optional lock files (ignore if you don't want to commit them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
