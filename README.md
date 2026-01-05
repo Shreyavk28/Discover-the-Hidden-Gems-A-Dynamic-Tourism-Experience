@@ -1,57 +1,75 @@
-# 🌍 Travel Website
+# 🌍 Discover the Hidden Gems: Karnataka Tourism Website
 
-A simple **Travel Website** built using **HTML, CSS, and JavaScript**.  
-This project showcases beautiful destinations with images, videos, and responsive layouts.
+A dynamic tourism website that showcases Karnataka’s districts, heritage, culture, food, and nearby attractions through an interactive and responsive user interface.
+
 
 ---
 
 ## ✨ Features
-- 🖼️ Image and video galleries of destinations  
-- 📱 Responsive design (works on desktop & mobile)  
-- 🎨 Clean UI with smooth styling  
-- 🧭 Easy navigation between sections  
+- District-wise tourism exploration across Karnataka
+- Detailed destination pages with:
+  - Overview
+  - Things to Do
+  - Popular Food
+  - Nearby Places
+- Image gallery and video sliders showcasing culture & heritage
+- Favorites feature for saving destinations
+- User review and rating system
+- Contact form with backend storage
+- Responsive design for desktop and mobile
 
 ---
+## 🛠 Tech Stack
+- Frontend: HTML, CSS, JavaScript
+- Backend: Node.js, Express.js
+- Database: MongoDB
+- APIs: Nearby Places API
 
-## 🚀 Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/YourUsername/Travel.git
-2. Navigate into the project:
-   ```bash
-   cd Travel
-3. Open the project:
+---
+## 🎯 Project Overview
+This project was developed as a mini project to promote tourism in Karnataka by providing a centralized, interactive, and user-friendly platform. It helps users explore districts, discover cultural heritage, view galleries, read reviews, and plan trips efficiently.
 
-   - On Windows: Double-click `index.html`
-   - Or from terminal:  
-     ```bash
-     start index.html
-     ```
-
-   - On Mac:  
-     ```bash
-     open index.html
-     ```
-
-   - On Linux:  
-     ```bash
-     xdg-open index.html
-     ```
 ---
 ## 📸 Screenshots
-### 🔐 Dashboard
-![Dashboard Page](./frontend/screenshots/Dashboard.png)  
+
+### Home Page
+![Home](./screenshots/home.png)
+
+### Destinations
+![Destinations](./screenshots/destinations.png)
+
+### Destination Details
+![Details](./screenshots/details.png)
+
+### Gallery
+![Gallery](./screenshots/gallery.png)
+
+### Review Section
+![Review](./screenshots/review.png)
+
+### Contact Page
+![Contact](./screenshots/contact.png)
+
 
 ---
 ## 📂 Project Structure
 ```plaintext
 Travel/
-│-- images/ # All images & videos used in the project
-│-- css/ # Stylesheets
+│-- images/ 
+│-- css/
 │ └── style.css
-│-- js/ # JavaScript files
+│-- js/ 
 │ └── script.js
-│-- index.html # Main homepage
-│-- about.html # About page
-│-- contact.html # Contact page
-│-- README.md # Project documentation
+│-- index.html 
+│-- about.html 
+│-- contact.html
+│-- README.md
+```
+---
+
+## 👩‍💻 Author
+**Shreya V K**  
+B.E. Computer Science (2026)  
+GitHub: https://github.com/Shreyavk28  
+LinkedIn: https://www.linkedin.com/in/shreya-vk-fullstack-developer
+
