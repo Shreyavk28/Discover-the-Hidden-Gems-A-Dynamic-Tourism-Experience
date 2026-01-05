@@ -31,37 +31,45 @@ This project was developed as a mini project to promote tourism in Karnataka by 
 ## 📸 Screenshots
 
 ### Home Page
-![Home](./screenshots/home.png)
+![Home](./screenshots/1.png)
 
 ### Destinations
-![Destinations](./screenshots/destinations.png)
+![Destinations](./screenshots/2.png)
 
 ### Destination Details
-![Details](./screenshots/details.png)
+![Details](./screenshots/3.png)
 
 ### Gallery
-![Gallery](./screenshots/gallery.png)
+![Gallery](./screenshots/4.png)
 
 ### Review Section
-![Review](./screenshots/review.png)
+![Review](./screenshots/5.png)
 
 ### Contact Page
-![Contact](./screenshots/contact.png)
+![Contact](./screenshots/6.png)
 
 
 ---
 ## 📂 Project Structure
 ```plaintext
 Travel/
-│-- images/ 
-│-- css/
-│ └── style.css
-│-- js/ 
-│ └── script.js
-│-- index.html 
-│-- about.html 
-│-- contact.html
+│-- images/
+│-- screenshots/
+│-- node_modules/
+│-- .env
+│-- .gitignore
+│-- cstyle.css
+│-- style.css
+│-- details.html
+│-- fav.html
+│-- index.html
+│-- info.html
+│-- script.js
+│-- server.js
+│-- package.json
+│-- package-lock.json
 │-- README.md
+
 ```
 ---
 
