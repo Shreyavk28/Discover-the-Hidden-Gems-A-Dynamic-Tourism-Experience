@@ -7,16 +7,13 @@ const cors = require('cors');
 require('dotenv').config(); 
 const app = express();
 
-
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));  
 app.use(cors());  
 
-
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log('MongoDB connection error:', err));
-
 
 const contactSchema = new mongoose.Schema({
     name: String,
@@ -26,10 +23,7 @@ const contactSchema = new mongoose.Schema({
     message: String,
     submittedAt: { type: Date, default: Date.now }
 });
-
-
 const Contact = mongoose.model('Contact', contactSchema);
-
 
 const reviewSchema = new mongoose.Schema({
     name: String,
@@ -39,20 +33,15 @@ const reviewSchema = new mongoose.Schema({
     approved: { type: Boolean, default: false }, 
     submittedAt: { type: Date, default: Date.now }
 });
-
 const Review = mongoose.model('Review', reviewSchema);
-
-
 
 app.post('/submit-form', async (req, res) => {
     const { name, email, number, subject, message } = req.body;
 
-  
     if (!name || !email || !number || !subject || !message) {
         return res.status(400).send('All fields are required.');
     }
 
-   
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailPattern.test(email)) {
         return res.status(400).send('Invalid email address.');
@@ -62,7 +51,6 @@ app.post('/submit-form', async (req, res) => {
     if (!numberPattern.test(number)) {
         return res.status(400).send('Phone number should contain only digits.');
     }
-
     try {
         
         const contact = new Contact(req.body);
@@ -101,13 +89,9 @@ app.delete('/contact-info/:id', async (req, res) => {
 
 app.post('/submit-review', async (req, res) => {
     const { name,email, experience, rating } = req.body;
-
-    
     if (!name ||!email|| !experience || !rating) {
         return res.status(400).send('All fields are required.');
     }
-
-  
     if (rating < 1 || rating > 5) {
         return res.status(400).send('Rating must be between 1 and 5.');
     }
@@ -148,11 +132,8 @@ app.post('/admin/approve-review/:id', async (req, res) => {
         if (!review) {
             return res.status(404).send('Review not found.');
         }
-
- 
         review.approved = true;
         await review.save();
-
         res.status(200).send('Review approved successfully.');
     } catch (error) {
         res.status(500).send('Failed to approve review.');
@@ -170,26 +151,19 @@ app.get('/reviews', async (req, res) => {
     }
 });
 
+
 app.delete('/reviews/:id', async (req, res) => {
     try {
-       
         const reviewId = req.params.id;
-
         const deletedReview = await Review.findByIdAndDelete(reviewId);
-
- 
         if (!deletedReview) {
             return res.status(404).send('Review not found.');
         }
-
-     
         res.status(200).send('Review deleted successfully.');
     } catch (error) {
         res.status(500).send('Failed to delete review.');
     }
 });
-
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

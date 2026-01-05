@@ -19,7 +19,6 @@
   color:#fff;
 }
 
-
 .package-box i.fas.fa-map-marker-alt {
   color: #007bff; 
 }
@@ -27,9 +26,6 @@
   font-size: 24px; 
   font-weight: bold; 
 }
-
-
-
 
 html{
   font-size: 62.5%;
@@ -154,9 +150,6 @@ header .search-bar-container label:hover{
   color:var(--orange);
 }
 
-
-
-
 #menu-bar{
   color:#fff;
   border:.1rem solid #fff;
@@ -226,9 +219,6 @@ header .search-bar-container label:hover{
 }
 
 
-
-
-
 .packages .box-container{
   display: flex;
   flex-wrap: wrap;
@@ -266,9 +256,6 @@ header .search-bar-container label:hover{
   color:#666;
   padding:1rem 0;
 }
-
-
-
 
 .gallery .box-container{
   display: flex;
@@ -454,11 +441,6 @@ header .search-bar-container label:hover{
   color:var(--orange);
 }
 
-
-
-
-  
-
 @media (max-width:1200px){
 
   html{
@@ -524,12 +506,6 @@ header .search-bar-container label:hover{
 
 }
 
-
-
-
-
-
-
 .heart-icon {
   position: absolute;
   top: 1rem;
@@ -564,11 +540,6 @@ header .search-bar-container label:hover{
   color: #666;
   padding: 1rem 0;
 }
-
-
-
-
-
 
 .contact {
   padding: 50px 20px;
@@ -640,11 +611,6 @@ header .search-bar-container label:hover{
   margin-top: 10px;
   font-weight: bold;
 }
-
-
-
-
-
 
 .stars input[type="radio"] {
   display: none;
@@ -869,8 +835,6 @@ header .search-bar-container label:hover{
     max-width: 80%;
   }
 }
-
-
 
 .fav-icon {
   position: absolute;

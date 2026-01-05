@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="cstyle.css">
 </head>
 <body>
-    <!-- Main Header Section -->
     <div class="image-container">
         <h1 id="destination-title">Destination</h1>
         <img id="destination-image" class="main-image-img" src="" alt="Main Destination Image">
@@ -21,7 +20,6 @@
         <div><a href="#" onclick="showSection('nearby-places', event)">Nearby Places</a></div>
     </div>
 
-    <!-- Sections for Content -->
     <div id="overview" class="destination-section">
         <h2>Overview</h2>
         <img id="overview-image" class="section-image" src="" alt="Overview Image">
@@ -38,7 +36,6 @@
         <ul id="food-list"></ul>
     </div>
 
-    <!-- Nearby Places Section -->
     <div id="nearby-places" class="destination-section" style="display: none;">
         <h2>Nearby Places</h2>
         <div id="places-list">
@@ -46,13 +43,11 @@
         </div>
     </div>
 
-    <!-- <button class="go-back-btn" onclick="window.history.back()">Go Back</button> -->
-     <button class="go-back-btn" onclick="window.location.href='index.html'">Go Back</button>
+    <button class="go-back-btn" onclick="window.location.href='index.html'">Go Back</button>
 
-<!-- meeee -->
-     <div id="destinationDescription"></div>
+    <div id="destinationDescription"></div>
+
     <script>
-        // Map of districts with lat and lon
         const googleMapsAPIKey = 't2w_eK3SDfhrdHD4Ek-WDYlXYutwZqfEXBn5vRNvv64'; 
         const districtCoordinates = {
             "Bangalore": { lat: 12.9716, lon: 77.5946 },
@@ -73,26 +68,22 @@
             "Koppal": { lat: 15.3447, lon: 76.1367 },
             "Kalaburagi": { lat: 17.3273, lon: 76.8327 },
             "Chikkaballapura": { lat: 13.4216, lon: 77.7343 },
-            "Belagavi":{lat:15.8497,lon:74.4977},
-            "Bidar":{lat:17.9104,lon: 77.5199},
-            "Hassan":{lat:13.0033,lon:76.1004},
-            "Haveri":{lat:14.7951,lon:75.3991}
-            
+            "Belagavi": { lat: 15.8497, lon: 74.4977 },
+            "Bidar": { lat: 17.9104, lon: 77.5199 },
+            "Hassan": { lat: 13.0033, lon: 76.1004 },
+            "Haveri": { lat: 14.7951, lon: 75.3991 }
         };
 
-        // Get the destination from the URL parameters
         const params = new URLSearchParams(window.location.search);
-        const destinationName = params.get('destination');  // Get destination from URL
-        const { lat, lon } = districtCoordinates[destinationName] || {}; // Get the lat and lon for the destination
+        const destinationName = params.get('destination');
+        const { lat, lon } = districtCoordinates[destinationName] || {};
 
-        // Set Destination Data
         function setDestinationData(title, image, overview, overviewImage, thingsToDo, food) {
             document.getElementById('destination-title').textContent = title;
             document.getElementById('destination-image').src = image;
             document.getElementById('overview-text').textContent = overview;
             document.getElementById('overview-image').src = overviewImage;
 
-            // Populate Things to Do
             const thingsToDoList = document.getElementById('things-to-do-list');
             thingsToDoList.innerHTML = '';
             thingsToDo.forEach(item => {
@@ -105,7 +96,6 @@
                 thingsToDoList.appendChild(listItem);
             });
 
-            // Populate Food
             const foodList = document.getElementById('food-list');
             foodList.innerHTML = '';
             food.forEach(item => {
@@ -118,122 +108,36 @@
                 foodList.appendChild(listItem);
             });
         }
-
       
 
 
- // Function to fetch nearby places based on district coordinates
 
-//  function fetchNearbyPlaces(lat, lon) {
-//     const apiKey = "t2w_eK3SDfhrdHD4Ek-WDYlXYutwZqfEXBn5vRNvv64";
-//     const apiUrl = https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&radius=10000&q=attractions&apikey=${apiKey};
-
-//     const customImages = {
-//         "Baba Budangiri": "./images/babagiri.jpeg",
-//         "Jhari Waterfall": "./images/jhari.jpeg",
-//         "Kavikal Gandi Viewpoint": "./images/kavikal.jpeg",
-//         "Shri Guru Dattatreya Swami Dattapita": "./images/dattapeta.jpg",
-//         "Shankar Falls": "./images/shankarfall.jpeg",
-//         "Bellandur Lake": "./images/bellandur.jpeg",
-//         "Indian Military Museum": "./images/military.jpeg",
-//         "Clock Tower": "./images/clocktower.jpeg",
-//         "Indian Military Museum": "./images/military.jpeg",
-//         "Karanji Vilas Palace-Mysore": "./images/karanji.avif",
-//         "Jagan Mohan Palace": "./images/jaganmohan.jpg",
-//     };
-
-//     fetch(apiUrl)
-//         .then(response => response.json())
-//         .then(data => {
-//             const placesList = document.getElementById("places-list");
-//             placesList.innerHTML = "";  
-
-//             if (data.items && data.items.length > 0) {
-                
-//                 const touristPlaces = data.items.filter(place => {
-//                     const categories = place.categories || [];
-                    
-                   
-//                     const isTouristPlace = categories.some(category =>
-//                         category.id.includes("tourist-attraction") ||
-//                         category.name.toLowerCase().includes("tourist") ||
-//                         category.name.toLowerCase().includes("attraction")
-//                     );
-
-//                     const undesiredKeywords = ["complex", "road", "street", "highway", "hotel", "restaurant", "food","villa","resort"];
-//                     const containsUndesiredKeyword = undesiredKeywords.some(keyword =>
-//                         place.title.toLowerCase().includes(keyword)
-//                     );
-
-//                     return isTouristPlace && !containsUndesiredKeyword;
-//                 });
-
-//                 const limitedPlaces = touristPlaces.slice(5,10);
-
-//                 if (limitedPlaces.length > 0) {
-                
-//                     limitedPlaces.forEach(place => {
-//                         const placeItem = document.createElement("div");
-//                         placeItem.classList.add("place-item");
-
-//                         const placeName = place.title || "No name available";
-//                         const placeDescription = place.address ? place.address.label : "No description available";
-//                         const placeImage = customImages[placeName] || "./images/placeholder.jpg";
-
-//                         placeItem.innerHTML = `
-//                             <img src="${placeImage}" alt="${placeName}">
-//                             <div class="place-info">
-//                                 <h3>${placeName}</h3>
-//                                 <p>${placeDescription}</p>
-//                             </div>
-//                         `;
-//                         placesList.appendChild(placeItem);
-//                     });
-//                 } else {
-//                     placesList.innerHTML = "<p>No nearby tourist places found.</p>";
-//                 }
-//             } else {
-//                 placesList.innerHTML = "<p>No nearby places found.</p>";
-//             }
-//         })
-//         .catch(error => {
-//             console.error("Error fetching places:", error);
-//             document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
-//         });
-// }
 function fetchNearbyPlaces(lat, lon) {
     const apiKey = "t2w_eK3SDfhrdHD4Ek-WDYlXYutwZqfEXBn5vRNvv64";
     const apiUrl = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&q=attractions&apikey=${apiKey}`;
 
-    // Custom images for specific places
     const customImages = {
-
         "Hebbe Falls": "./images/hebbe-falls.jpg",
         "Kalhatti Falls": "./images/kalhatti.webp",
         "Jhari Waterfall": "./images/jhari.jpeg",
         "Kavikal Gandi Viewpoint": "./images/kavikal.jpeg",
         "Shri Guru Dattatreya Swami Dattapita": "./images/dattapeta.jpg",
-       
         "Bellandur Lake": "./images/bellandur.jpeg",
         "Indian Military Museum": "./images/military.jpeg",
         "Tippu Sultan's Palace": "./images/bnglr-palace.png",
         "Lalbagh Botanical Garden": "./images/lalbagh.webp",
-        "Peninsular Gneiss":"./images/pen.webp",
-
+        "Peninsular Gneiss": "./images/pen.webp",
         "Rail Museum": "./images/rail.jpg",
         "Jagan Mohan Palace": "./images/jaganmohan.jpg",
         "Kukarahalli Lake": "./images/kukku.jpg",
         "Shri Prasanna Krishnaswami Temple": "./images/prasanna.jpg",
         "Shri Lakshmi Ramana Swami Temple": "./images/lakshmi.png",
-
-        "Nehru Mantapa":"./images/nehru.avif",
+        "Nehru Mantapa": "./images/nehru.avif",
         "Shanti Estate": "./images/shanti.jpg",
         "Pappy's Coffee Plantation": "./images/pappy.jpg",
         "Raja's Tomb": "./images/raj.jpg",
         "Kaveri River": "./images/kaverii.jpg",
         "Madikeri Fort": "./images/om.jpg",
-
-
         "Panambur Beach": "./images/panambur.jpeg",
         "Gurupura River": "./images/hanging.jpg",
         "Shri Yogeshwar Mutt": "./images/dd4.png",
@@ -241,161 +145,129 @@ function fetchNearbyPlaces(lat, lon) {
         "Tannirbhavi Beach": "./images/beach.jpg",
         "Pilikula Nisargadhama": "./images/dd1.png",
         "Surathkal Beach": "./images/surat.jpg",
-
-
         "Mehtar Mahal": "./images/mehtar.jpg",
         "Gol Gumbaz": "./images/golgumbaz.jpg",
         "Bijapur Fort": "./images/fort.jpeg",
         "Raval Phadi Brahmanical Cave": "./images/cave.jpg",
         "Hyder Buruj": "./images/hyder.jpg",
-
         "Bhadra Wildlife Sanctuary": "./images/badra.jpg",
-        "Kalhatti Falls": "./images/kalhatti.webp",
         "Kuvempu Memorial Trust Ranga Mandira": "./images/kuvempu.jpeg",
-
         "Om Beach": "./images/om.jpg",
         "Mirjan Fort": "./images/mirjan.jpeg",
         "Gore Hills": "./images/gore.jpg",
-//new
-"Kasturi Rangappa Nayaka Fort":"./images/vk1.png",
-        "Vani Vilas Nature Park":"./images/vk2.png",
-        "Madhugiri Fort":'./images/vk3.png',
-        "Jamalabad Fort Entry":'./images/vk4.png',
-        "Someshwar Beach":'./images/vk5.png',
-        "Source of Polar River":'./images/vk6.png',
-        "Nandi View Point":'./images/vk7.png',
-        "Arkavathi River Origin Place":'./images/vk8.png',
-        "Almatti Dam":'./images/vk9.png',
-        "Durga Temple":'./images/vk10.png',
-        "Large Seated Remains":'./images/vk11.png',
-        "Kudala Sangam Arch":'./images/vk12.png',
-        "Stepped Tank":'./images/vg8.png',
-        "Surathkal Beach":'./images/vk13.png',
-        "Malkhed":'./images/vk14.png',
-        "Bhusani Dam":'./images/vk15.png',
-        "Ethipotala Falls":'./images/vk16.png',
-        "Hidkal Dam":'./images/vk17.png',
-        "Godachinmalki Falls":'./images/vk18.png',
-        "Three Groups of Dolmens":'./images/vk19.png',
-        "Hiranykeshi Point":'./images/vk20.png',
-        "Kablesad Point":'./images/vk21.png',
+        "Kasturi Rangappa Nayaka Fort": "./images/vk1.png",
+        "Vani Vilas Nature Park": "./images/vk2.png",
+        "Madhugiri Fort": "./images/vk3.png",
+        "Jamalabad Fort Entry": "./images/vk4.png",
+        "Someshwar Beach": "./images/vk5.png",
+        "Source of Polar River": "./images/vk6.png",
+        "Nandi View Point": "./images/vk7.png",
+        "Arkavathi River Origin Place": "./images/vk8.png",
+        "Almatti Dam": "./images/vk9.png",
+        "Durga Temple": "./images/vk10.png",
+        "Large Seated Remains": "./images/vk11.png",
+        "Kudala Sangam Arch": "./images/vk12.png",
+        "Stepped Tank": "./images/vg8.png",
+        "Malkhed": "./images/vk14.png",
+        "Bhusani Dam": "./images/vk15.png",
+        "Ethipotala Falls": "./images/vk16.png",
+        "Hidkal Dam": "./images/vk17.png",
+        "Godachinmalki Falls": "./images/vk18.png",
+        "Three Groups of Dolmens": "./images/vk19.png",
+        "Hiranykeshi Point": "./images/vk20.png",
+        "Kablesad Point": "./images/vk21.png",
         "Kaup Village": "./images/up1.png",
         "Varanga Lake": "./images/up2.png",
         "Sasihithlu Beach": "./images/up3.png",
         "Koti-Chennaya Jodukare Kambala": "./images/dd3.png",
         "Kannada University": "./images/v3.png",
- "Shivlinga": "./images/v4.png",
-  "Mahanavami Dibba Hampi": "./images/k4.png",
- "Stepped Tank":'./images/vg8.png',
- "LOTUS Mahal": "./images/v5.png",
- "Spot Where Tipus Body Was Found": "./images/m3.png",
- "Colonel Baileys Dungeon": "./images/m5.png",
-"Jamia Masjid": "./images/jamia.jpeg",
-"Unkal Lake-Main Entrance": "./images/h1.png",
+        "Shivlinga": "./images/v4.png",
+        "Mahanavami Dibba Hampi": "./images/k4.png",
+        "LOTUS Mahal": "./images/v5.png",
+        "Spot Where Tipus Body Was Found": "./images/m3.png",
+        "Colonel Baileys Dungeon": "./images/m5.png",
+        "Jamia Masjid": "./images/jamia.jpeg",
+        "Unkal Lake-Main Entrance": "./images/h1.png",
         "Unkal Lake-Entrance 1": "./images/h2.png",
         "Kempkeri Lake": "./images/h3.png",
         "Navalur Lake": "./images/h4.png",
         "Mini Vidhanasoudha": "./images/h5.png",
         "Hampi": "./images/k3.png",
- "Mahanavami Dibba Hampi": "./images/k4.png",
- "LOTUS Mahal": "./images/v5.png",
- "Shivlinga": "./images/v4.png",
- "Mostayour Dam":"./images/kal1.png",
-        "Old Rajawada":"./images/kal2.png",
- "Aiahole": "./images/x1.png",
- "Nandi Hill Caves": "./images/kk2.png",
-  "Cubbon House": "./images/kk5.png",
-  "Koti-Chennaya Jodukare Kambala": "./images/dd3.png",
- "Gangavatharna Fountain": "./images/fountain.jpg",
- "Jamia Masjid": "./images/jamia.jpeg",
- "The Citadel and Ruined Buildings on the Hill": "./images/cc2.png",
-"Shri Shiridi Sai Temple Arch": "./images/cc3.png",
-"Shri Kashivishweshwaraswamy Temple": "./images/kaashi.jpg",
-"108ft Basaveshwara Statue":'./images/bi9.jpg',
-        "Kotpally Reservoir":'./images/bidar 10.jpg',
-        "Hoysaleshwara Temple":'./images/hh16.jpeg',
-        "Halebeedu Archeological Site":'./images/hh17.jpg',
-        "Shri Someshwara Temple":'./images/hh18.jpg',
-        "Yagachi Water Sports Park":'./images/hh19.avif',
-        "Vindhyagiri Hills":'./images/hh20.webp',
+        "Mostayour Dam": "./images/kal1.png",
+        "Old Rajawada": "./images/kal2.png",
+        "Aiahole": "./images/x1.png",
+        "Nandi Hill Caves": "./images/kk2.png",
+        "Cubbon House": "./images/kk5.png",
+        "Gangavatharna Fountain": "./images/fountain.jpg",
+        "The Citadel and Ruined Buildings on the Hill": "./images/cc2.png",
+        "Shri Shiridi Sai Temple Arch": "./images/cc3.png",
+        "Shri Kashivishweshwaraswamy Temple": "./images/kaashi.jpg",
+        "108ft Basaveshwara Statue": "./images/bi9.jpg",
+        "Kotpally Reservoir": "./images/bidar 10.jpg",
+        "Hoysaleshwara Temple": "./images/hh16.jpeg",
+        "Halebeedu Archeological Site": "./images/hh17.jpg",
+        "Shri Someshwara Temple": "./images/hh18.jpg",
+        "Yagachi Water Sports Park": "./images/hh19.avif",
+        "Vindhyagiri Hills": "./images/hh20.webp",
         "Fort": "./images/mani.avif",
-        "Veera Rani Kittur Chennamma":'./images/sm1.jpg',
-        "Black Buck Santuary":'./images/sm2.jpg',
-        "Chandragutti Fort":'./images/sm3.jpg',
-        "Sahasralinga":'./images/sm4.jpg',
-        "Magod Falls":'./images/sm5.jpg',
-        "Shivavilas Palace":'./images/dattu.avif',
-
+        "Veera Rani Kittur Chennamma": "./images/sm1.jpg",
+        "Black Buck Santuary": "./images/sm2.jpg",
+        "Chandragutti Fort": "./images/sm3.jpg",
+        "Sahasralinga": "./images/sm4.jpg",
+        "Magod Falls": "./images/sm5.jpg",
+        "Shivavilas Palace": "./images/dattu.avif"
     };
 
     fetch(apiUrl)
-    .then(response => response.json())
-    .then(data => {
-        console.log("Fetched data:", data);
+        .then(response => response.json())
+        .then(data => {
+            console.log("Fetched data:", data);
 
-        const placesList = document.getElementById("places-list");
-        placesList.innerHTML = "";
+            const placesList = document.getElementById("places-list");
+            placesList.innerHTML = "";
 
-        if (data.items && data.items.length > 0) {
-            // Filter for tourist places, excluding hotels, food-related places, and specific exclusions
-            const touristPlaces = data.items.filter(place => {
-                const categories = place.categories || [];
+            if (data.items && data.items.length > 0) {
+                const touristPlaces = data.items.filter(place => {
+                    const categories = place.categories || [];
 
-                // Check if place is a tourist attraction
-                const isTouristPlace = categories.some(category =>
-                    category.id.includes("tourist-attraction") ||
-                    category.name.toLowerCase().includes("tourist") ||
-                    category.name.toLowerCase().includes("attraction")
-                );
+                    const isTouristPlace = categories.some(category =>
+                        category.id.includes("tourist-attraction") ||
+                        category.name.toLowerCase().includes("tourist") ||
+                        category.name.toLowerCase().includes("attraction")
+                    );
 
-              // Exclude undesired types (complex, roads, streets, highways, food, hotels, Basatis, Inscriptions, etc.)
-            const undesiredKeywords = [
-                "complex", "road", "Basatis and Inscriptions", "street", "Clock Tower","highway","Kannadabane View Point","Mahatma Gandhi Museum","Pilikula Biological Park",
-                "hotel", "restaurant", "food", "kere", "bridge", "resort","M Venkatakrishnayyanavaru","M Venkatakrishnayyanavaru","Mangalore Beach",
-                "Sons EE Ah Ray Ranch", "Major Rama Raghoba Rane", "Sagara Mathsalaya","Lalbag Botanical Garden",
-                "Central Market", "Tannirbhavi View Point","Pigeons Feeding Place","Tipu Sultan's Armoury","Vadyaranga Mantapa","Lets We Forget",
-                "Shri Mathanda Cheeyamma Smaraka","Kote Betta","Pigeon Feeding","Glass House Lalbagh Botanical Garden","Lalbhag East Gate","Madikeri Fort",
+                    const undesiredKeywords = [
+                        "complex", "road", "Basatis and Inscriptions", "street", "Clock Tower", "highway",
+                        "hotel", "restaurant", "food", "kere", "bridge", "resort",
+                        "Central Market", "Sacred Grove", "Valley", "River View",
+                        "Inscriptions", "Jain Basadi", "Mini Vidhana Soudha"
+                    ];
 
-               
-                "Sacred Grove","Valley","River View","Gob Gumbaz","Z Point Trekking Peak","Anjediva Island","Anjediva Fort","Light House","Karwar Beach","Kranthiveera Chakmak Jangveera Bahaddur","Abyss Marine Aquarium","Kuskem Waterfall",
-                "Mukka","Mallamar Beach","Hanuman Gundi Fa","Daroji Bear Wildlife Sanctuary","Daroji Bear Sanctuary","Kanakadasa Statue","Dodda Gosai Ghaat","Ancient Palace Site and Remains","Lohia Nagar Lake",
-                "Tarihal Pond","Two Storeyed Mandapa","Stone Aqueduct-Shrine Chamber","Relief Sculptures on the Behind the Bhutanatha Group of Temples","Large Seated Remains, SH-133, Aihole, Hungund 587124, India","Amingad Swagat Arch",
-                "Tallikeri Swagath Dwar","Sangameswar Temple Arch","Neelikai Basavanna Bramhashram","Ullal","Quthubuzzaman Asseyyid Muhammed Shareeful Madani Darga",
+                    const containsUndesiredKeyword = undesiredKeywords.some(keyword =>
+                        place.title.toLowerCase().includes(keyword.toLowerCase())
+                    );
 
-                "Kangrali Lake","Gokak Waterfalls","Ghataprabha Bird Sanctuary","Tilari Dam","Anjunem Dam","Bhimgad Wildlife Sanctuary","Tambdi Surla Mahadev Temple","Bhalki Fort","Karaji River","Nandhi Statue","Bhalkeshwar Well",
-                "Chattrapati Shivaji Maharaj Grass Art","Dharur Fort-Dharur","Sannati", "Inscriptions","Mangaai Basadi","Nagar Jinalaya Basadi","Mudilinganakoppalu","Jain Basadi","Kalyadi Copper Mine","Bhagawan Bahubali Statue","Ambadkar Statue","Chudimahal","Singur Dam","Dr Br Ambedkar Statue",
-
-                "Kalleshwara Temple","Viraktha Mutt Hangal","Attiveri Bird Sanctuary","Mini Vidhana Soudha"
-            
-            ];
+                    return isTouristPlace && !containsUndesiredKeyword;
+                });
+           
 
 
-            const containsUndesiredKeyword = undesiredKeywords.some(keyword =>
-                place.title.toLowerCase().includes(keyword.toLowerCase()) // Case-insensitive comparison
-            );
-
-            // Only include places that are tourist attractions and do not match undesired keywords
-            return isTouristPlace && !containsUndesiredKeyword;
-        });
-
-
-            // Apply TSP to find the optimal route
             const optimalRoute = tspGreedy(touristPlaces, lat, lon);
             console.log("Optimal route:", optimalRoute);
 
-            // Slice results from index 5 to 11 (6th to 12th places)
+           
             const limitedPlaces = optimalRoute.slice(5, 10);
             console.log("Limited places (5th to 10th):", limitedPlaces);
 
-            // Sort the limited places in ascending order based on distance from the starting point
+            
             limitedPlaces.sort((a, b) => {
                 const distanceA = calculateDistance(lat, lon, a.position.lat, a.position.lng);
                 const distanceB = calculateDistance(lat, lon, b.position.lat, b.position.lng);
-                return distanceA - distanceB; // Sort in ascending order of distance
+                return distanceA - distanceB; 
             });
 
             if (limitedPlaces.length > 0) {
-                // Generate HTML for each tourist place
+            
                 limitedPlaces.forEach(place => {
                     const placeItem = document.createElement("div");
                     placeItem.classList.add("place-item");
@@ -404,16 +276,16 @@ function fetchNearbyPlaces(lat, lon) {
                     const placeDescription = place.address ? place.address.label : "No description available";
                     const placeImage = customImages[placeName] || "./images/placeholder.jpg";
 
-                    // Calculate distance for each place
+                   
                     const placeLat = place.position.lat;
                     const placeLon = place.position.lng;
-                    const distance = calculateDistance(lat, lon, placeLat, placeLon).toFixed(2); // in kilometers
+                    const distance = calculateDistance(lat, lon, placeLat, placeLon).toFixed(2); 
 
                     const placeImageElement = document.createElement("img");
                     placeImageElement.src = placeImage;
                     placeImageElement.alt = placeName;
-                    placeImageElement.height = 250; // Set height
-                    placeImageElement.width = 350; // Set width
+                    placeImageElement.height = 250; 
+                    placeImageElement.width = 350; 
 
                     placeItem.innerHTML = `
                         <div class="place-info">
@@ -437,20 +309,19 @@ function fetchNearbyPlaces(lat, lon) {
         document.getElementById("places-list").innerHTML = "<p>Unable to fetch nearby places. Please try again later.</p>";
     });
 
-// Custom function to calculate the distance between two sets of lat/lon coordinates
+
 function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Earth radius in kilometers
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a =
         0.5 - Math.cos(dLat) / 2 +
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
         (1 - Math.cos(dLon)) / 2;
-    const distance = R * 2 * Math.asin(Math.sqrt(a)); // Calculate distance in km
+    const distance = R * 2 * Math.asin(Math.sqrt(a)); 
     return distance;
 }
 
-// Travel Salesman Problem (TSP) - Greedy Nearest Neighbor solution
 function tspGreedy(places, startLat, startLon) {
     const unvisited = [...places];
     const route = [];
@@ -479,53 +350,31 @@ function tspGreedy(places, startLat, startLon) {
         currentLat = nearestPlace.position.lat;
         currentLon = nearestPlace.position.lng;
     }
-     //   After visiting all places, add the return to the initial position (startLat, startLon)
-    //  const returnDistance = calculateDistance(currentLat, currentLon, startLat, startLon);
-    // route.push({
-    //     place: {
-    //         title: "Return to Starting Point",
-    //         position: {
-    //             lat: startLat,
-    //             lng: startLon
-    //         }
-    //     },
-    //     distance: returnDistance 
-    // });
+     
     return route;
 }
 }
 
 
-// Call the function with Koppal coordinates (15.3447, 76.1367)
-// fetchNearbyPlaces(15.3447, 76.1367);
-
-        // Show specific sections like Overview, Things to Do, Food, Nearby Places
         function showSection(sectionId) {
             document.querySelectorAll('.destination-section').forEach(section => section.style.display = 'none');
             document.getElementById(sectionId).style.display = 'block';
-
-            // If Nearby Places section is selected, fetch nearby places
             if (sectionId === "nearby-places" && lat && lon) {
-                fetchNearbyPlaces(lat, lon);  // Fetch nearby places based on lat and lon
+                fetchNearbyPlaces(lat, lon);  
             }
         }
 
 
-// Call the function with Koppal coordinates (15.3447, 76.1367)
-// fetchNearbyPlaces(15.3447, 76.1367);
-
-        // Show specific sections like Overview, Things to Do, Food, Nearby Places
         function showSection(sectionId) {
             document.querySelectorAll('.destination-section').forEach(section => section.style.display = 'none');
             document.getElementById(sectionId).style.display = 'block';
 
-            // If Nearby Places section is selected, fetch nearby places
+            
             if (sectionId === "nearby-places" && lat && lon) {
-                fetchNearbyPlaces(lat, lon);  // Fetch nearby places based on lat and lon
+                fetchNearbyPlaces(lat, lon);  
             }
         }
 
-        // Initialize with data for the selected destination
         if (destinationName === "Bangalore") {
             setDestinationData(
                 "Bangalore",

@@ -78,21 +78,13 @@ var swiper = new Swiper(".brand-slider", {
 });
 
 
-
-
-
-
 function goBackWithoutScroll() {
   
   window.history.back();
 }
 
-
-
-
 const searchButton = document.querySelector('#search-btn');  
 const searchInput = document.querySelector('#search-bar');  
-
 
 const packageNames = {
     'mysore': 'mysore-package-section',
@@ -129,7 +121,6 @@ function scrollToSection(sectionId) {
       }
 }
 
-
 searchButton.addEventListener('click', function() {
   const searchValue = searchInput.value.trim().toLowerCase(); 
   
@@ -157,34 +148,23 @@ searchInput.addEventListener('keydown', function(event) {
 });
 
 
-
-
-
-
     const form = document.getElementById('contact-form');
     const message = document.getElementById('form-message');
 
     form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Prevent the default form submission
-
-        // Clear any previous error or success messages
+        e.preventDefault(); 
         message.textContent = '';
-
-        // Check if all required fields are filled
         const name = form.querySelector('input[name="name"]').value.trim();
         const email = form.querySelector('input[name="email"]').value.trim();
         const number = form.querySelector('input[name="number"]').value.trim();
         const subject = form.querySelector('input[name="subject"]').value.trim();
         const messageText = form.querySelector('textarea[name="message"]').value.trim();
 
-        // Validate fields
         if (!name || !email || !number || !subject || !messageText) {
             message.textContent = 'Please fill in all fields.';
             message.style.color = 'red';
-            return; // Stop the form submission
+            return; 
         }
-
-        // Additional Email Validation (Simple Regex)
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         if (!emailPattern.test(email)) {
             message.textContent = 'Please enter a valid email address.';
@@ -192,7 +172,6 @@ searchInput.addEventListener('keydown', function(event) {
             return;
         }
 
-        // Additional Number Validation (Only numbers)
         const numberPattern = /^[0-9]+$/;
         if (!numberPattern.test(number)) {
             message.textContent = 'Please enter a valid phone number (only digits).';
@@ -221,8 +200,6 @@ searchInput.addEventListener('keydown', function(event) {
         }
     });
 
-
-// 1. Handle Review Form Submission
 document.getElementById('reviewForm').addEventListener('submit', async function (event) {
     event.preventDefault();
 
@@ -237,7 +214,7 @@ document.getElementById('reviewForm').addEventListener('submit', async function 
     }
 
     try {
-        // Submit the review to the backend
+        
         const response = await fetch('http://localhost:5000/submit-review', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -245,12 +222,10 @@ document.getElementById('reviewForm').addEventListener('submit', async function 
         });
 
         if (response.ok) {
-            // Reset the form and show a success message
+           
             document.getElementById('reviewForm').reset();
             document.getElementById('successMessage').style.display = 'block';
-
-            // Reload reviews after submission
-            fetchApprovedReviews();  // This will re-fetch approved reviews after submission
+            fetchApprovedReviews();  
         } else {
             alert('Failed to submit review.');
         }
@@ -304,7 +279,6 @@ async function fetchApprovedReviews() {
     }
 }
 
-
 function getStars(rating) {
     let stars = '';
     for (let i = 0; i < 5; i++) {
@@ -316,7 +290,6 @@ function getStars(rating) {
     }
     return stars;
 }
-
 
 async function approveReview(reviewId) {
     try {
@@ -335,11 +308,8 @@ async function approveReview(reviewId) {
     }
 }
 
-
 function addReviewToCarousel(reviewData) {
     const reviewContainer = document.getElementById('reviewContainer');
-
-   
     const newReview = document.createElement('div');
     newReview.classList.add('swiper-slide');
     newReview.innerHTML = `
@@ -353,10 +323,9 @@ function addReviewToCarousel(reviewData) {
         </div>
     `;
 
-    
     reviewContainer.appendChild(newReview);
 
- 
+
     const swiper = new Swiper('.review-slider', {
         slidesPerView: 3,
         spaceBetween: 30,
@@ -391,11 +360,6 @@ async function fetchUnapprovedReviews() {
     }
 }
 
-
-
-
-
-
 function toggleFavorite(icon) {
     const packageBox = icon.closest('.package-box');
     const packageTitle = packageBox.querySelector('h3').innerText;
@@ -403,30 +367,20 @@ function toggleFavorite(icon) {
   
     let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
   
-    
     if (favorites.includes(packageHTML)) {
-        // If the item is already in the favorites, show an alert
-        // alert('This place is already added to the wishlist.');
         alert(`${packageTitle} is already in your favorites!`);
     } else {
-        // If the item is not in the favorites, add it
         favorites.push(packageHTML);
         localStorage.setItem('favorites', JSON.stringify(favorites));
-  
-        // Show a success message
-        // alert('Place added to wishlist!');
         alert(`${packageTitle} added to favorites!`);
-        
-        // Add the "active" class to mark the heart icon as selected
         icon.classList.add('active');
     }
-  }
+}
   
-  // Event listener for the heart icon to redirect to favorites page
-  document.getElementById('heart-btn').addEventListener('click', function () {
-    // Redirect to the favorites page
-    window.location.href = 'fav.html';  // Ensure the path is correct
-  });
+document.getElementById('heart-btn').addEventListener('click', function () {
+    window.location.href = 'fav.html';
+});
+
 
 
 
