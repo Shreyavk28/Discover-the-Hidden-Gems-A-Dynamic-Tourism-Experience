@@ -1,7 +1,9 @@
 # 🌍 Discover the Hidden Gems: Karnataka Tourism Website
 
 A dynamic tourism website that showcases Karnataka’s districts, heritage, culture, food, and nearby attractions through an interactive and responsive user interface.
-
+---
+## 🎯 Project Overview
+This project was developed as a mini project to promote tourism in Karnataka by providing a centralized, interactive, and user-friendly platform. It helps users explore districts, discover cultural heritage, view galleries, read reviews, and plan trips efficiently.
 
 ---
 
@@ -24,10 +26,6 @@ A dynamic tourism website that showcases Karnataka’s districts, heritage, cult
 - Backend: Node.js, Express.js
 - Database: MongoDB
 - APIs: Nearby Places API
-
----
-## 🎯 Project Overview
-This project was developed as a mini project to promote tourism in Karnataka by providing a centralized, interactive, and user-friendly platform. It helps users explore districts, discover cultural heritage, view galleries, read reviews, and plan trips efficiently.
 
 ---
 ## 📸 Screenshots
